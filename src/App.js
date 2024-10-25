@@ -9,6 +9,7 @@ import theme from "./theme";
 const Dashboard = lazy(() => import("./Screen/Dashboard"));
 const SignIn = lazy(() => import("./Screen/SignIn"));
 const NotFound = lazy(() => import("./Screen/NotFound"));
+const Home = lazy(() => import("./Screen/Home"));
 const Welcome = lazy(() => import("./Screen/Welcome"));
 
 const App = () => {
@@ -70,6 +71,10 @@ const App = () => {
                           <Route
                             path="/dashboard"
                             element={<Dashboard />}
+                          />
+                          <Route
+                            path="/home"
+                            element={<Home />}
                           />
                           <Route path="/" element={<Welcome />} />
                           <Route path="*" element={<NotFound />} />
