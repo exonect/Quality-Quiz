@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { Home, Favorite, Settings, Star, Info } from "@mui/icons-material"; // Example icons
 import Toaster from "../../Helper/Components/Toaster";
-import { GetQuizQuestionApi } from "../../Helper/Api";
+import { GetQuizQuestionApi, PostQuizAnswerApi } from "../../Helper/Api";
 import AppLoading from "../../Helper/Components/AppLoading";
 
 const departments = ["Department 1", "Department 2", "Department 3"];
@@ -22,7 +22,11 @@ const departments = ["Department 1", "Department 2", "Department 3"];
 const QuizDashboard = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [quizQuestions, setQuizQuestions] = useState([]);
+  const [selectedAnswerList, setSelectedAnswerList] = useState([]);
+  const [quizStartTime, setQuizStartTime] = useState(null);
+  const [quizEndTime, setQuizEndTime] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState("");
+  const [selectedAnswerQId, setSelectedAnswerQId] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [isQuizStarted, setIsQuizStarted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(40);
@@ -45,6 +49,27 @@ const QuizDashboard = () => {
     setOpenToaster(true);
   };
 
+  const onPostQuizAnswer = async () => {
+    setIsLoading(true);
+    const postQuizAnswerData = await PostQuizAnswerApi({
+      score: "100",
+      user: 1,
+      start_time: quizStartTime,
+      end_time: quizEndTime,
+      responses: selectedAnswerList,
+    });
+    if (postQuizAnswerData.status >= 200 && postQuizAnswerData.status <= 300) {
+      setIsLoading(false);
+      showToastMessage("Quiz Completed!", "success");
+      resetQuiz();
+    } else {
+      resetQuiz();
+      setIsLoading(false);
+      // showToastMessage(postQuizAnswerData.data.error, "error");
+      showToastMessage('Somethig want to wrong please try again', "error");
+    }
+  };
+
   useEffect(() => {
     if (timerActive && timeLeft > 0) {
       const timer = setInterval(() => {
@@ -52,8 +77,10 @@ const QuizDashboard = () => {
       }, 1000);
       return () => clearInterval(timer);
     } else if (timeLeft === 0) {
-      alert("Time is up! Quiz Completed!");
-      resetQuiz();
+      showToastMessage("Time is up! Quiz Completed!", "error");
+      const EndTime = new Date();
+      setQuizEndTime(EndTime.getTime());
+      onPostQuizAnswer();
     }
   }, [timerActive, timeLeft]);
 
@@ -63,44 +90,57 @@ const QuizDashboard = () => {
 
   const handleNext = () => {
     if (selectedAnswer) {
+      selectedAnswerList.push({
+        question_id: selectedAnswerQId,
+        selected_answer: selectedAnswer,
+      });
+      setSelectedAnswerList([...selectedAnswerList]);
       if (activeStep < quizQuestions.length - 1) {
         setActiveStep((prev) => prev + 1);
         setSelectedAnswer("");
+        setSelectedAnswerQId("");
       } else {
-        alert("Quiz Completed!");
-        resetQuiz();
+        const EndTime = new Date();
+        setQuizEndTime(EndTime.getTime());
+        onPostQuizAnswer()
       }
     }
   };
 
   const getQuizQuestionList = async () => {
     setIsLoading(true);
-    const QuizQuestionListData = await GetQuizQuestionApi();
+    const quizQuestionListData = await GetQuizQuestionApi();
     if (
-      QuizQuestionListData.status >= 200 &&
-      QuizQuestionListData.status <= 300
+      quizQuestionListData.status >= 200 &&
+      quizQuestionListData.status <= 300
     ) {
-      setQuizQuestions(QuizQuestionListData.data);
+      setQuizQuestions(quizQuestionListData.data);
       setIsLoading(false);
       setIsQuizStarted(true);
       setTimerActive(true);
     } else {
       setIsLoading(false);
-      showToastMessage(QuizQuestionListData.data.error, "error");
+      showToastMessage(quizQuestionListData.data.error, "error");
     }
   };
 
   const handleStartQuiz = () => {
+    const StartTime = new Date();
+    setQuizStartTime(StartTime.getTime());
     getQuizQuestionList();
   };
 
   const resetQuiz = () => {
     setActiveStep(0);
     setSelectedAnswer("");
+    setSelectedAnswerQId("");
+    setSelectedAnswerList([]);
     setSelectedDepartment("");
     setIsQuizStarted(false);
     setTimeLeft(40);
     setTimerActive(false);
+    setQuizStartTime(null);
+    setQuizEndTime(null);
   };
 
   const getTimerColor = () => {
@@ -246,25 +286,28 @@ const QuizDashboard = () => {
                 <FormControl component="fieldset">
                   <RadioGroup
                     value={selectedAnswer}
-                    onChange={(e) => setSelectedAnswer(e.target.value)}
+                    onChange={(e) => {
+                      setSelectedAnswer(e.target.value);
+                      setSelectedAnswerQId(quizQuestions[activeStep].id);
+                    }}
                   >
                     <FormControlLabel
-                      value={quizQuestions[activeStep].option_1}
+                      value={"option_1"}
                       control={<Radio />}
                       label={quizQuestions[activeStep].option_1}
                     />
                     <FormControlLabel
-                      value={quizQuestions[activeStep].option_2}
+                      value={"option_2"}
                       control={<Radio />}
                       label={quizQuestions[activeStep].option_2}
                     />
                     <FormControlLabel
-                      value={quizQuestions[activeStep].option_3}
+                      value={"option_3"}
                       control={<Radio />}
                       label={quizQuestions[activeStep].option_3}
                     />
                     <FormControlLabel
-                      value={quizQuestions[activeStep].option_4}
+                      value={"option_4"}
                       control={<Radio />}
                       label={quizQuestions[activeStep].option_4}
                     />
@@ -282,7 +325,7 @@ const QuizDashboard = () => {
                       width: "40%",
                     }}
                   >
-                    Next
+                    {activeStep < quizQuestions.length - 1 ? "Next" : "Submite"}
                   </Button>
                 </Box>
               </Box>

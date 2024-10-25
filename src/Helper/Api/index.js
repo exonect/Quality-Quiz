@@ -3,6 +3,7 @@ import {
   LOGOUT_API_URL,
   LOGIN_WITH_SSO_API_URL,
   GET_QUIZ_QUESTION_API_URL,
+  POST_QUIZ_ANSWER_API_URL,
 } from "./apiURL";
 
 export const signOut = async () => {
@@ -36,10 +37,21 @@ export const LoginWithSSOApi = async (params) => {
 export const GetQuizQuestionApi = async (params) => {
   try {
     const response = await API.get(`${GET_QUIZ_QUESTION_API_URL}round-one/random/get/`, params);
-    console.log("Get Quiz QuestionApi Api response ======>>>", response);
+    console.log("Get Quiz Question Api Api response ======>>>", response);
     return response;
   } catch (error) {
-    console.log("Get Quiz QuestionApi Api error ======>>>", error);
+    console.log("Get Quiz Question Api Api error ======>>>", error);
+    return error?.response;
+  }
+};
+
+export const PostQuizAnswerApi = async (params) => {
+  try {
+    const response = await API.post(`${POST_QUIZ_ANSWER_API_URL}round-one/post/`, params);
+    console.log("Post Quiz Answer Api Api response ======>>>", response);
+    return response;
+  } catch (error) {
+    console.log("Post Quiz Answer Api Api error ======>>>", error);
     return error?.response;
   }
 };
