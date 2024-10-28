@@ -29,7 +29,7 @@ const QuizDashboard = () => {
   const [selectedAnswerQId, setSelectedAnswerQId] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [isQuizStarted, setIsQuizStarted] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(40);
+  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes
   const [isLoading, setIsLoading] = useState(false);
   const [timerActive, setTimerActive] = useState(false);
   const [openToaster, setOpenToaster] = useState(false);
@@ -65,8 +65,7 @@ const QuizDashboard = () => {
     } else {
       resetQuiz();
       setIsLoading(false);
-      // showToastMessage(postQuizAnswerData.data.error, "error");
-      showToastMessage('Somethig want to wrong please try again', "error");
+      showToastMessage('Something went wrong, please try again', "error");
     }
   };
 
@@ -102,7 +101,7 @@ const QuizDashboard = () => {
       } else {
         const EndTime = new Date();
         setQuizEndTime(EndTime.getTime());
-        onPostQuizAnswer()
+        onPostQuizAnswer();
       }
     }
   };
@@ -137,14 +136,20 @@ const QuizDashboard = () => {
     setSelectedAnswerList([]);
     setSelectedDepartment("");
     setIsQuizStarted(false);
-    setTimeLeft(40);
+    setTimeLeft(600); // Reset to 10 minutes
     setTimerActive(false);
     setQuizStartTime(null);
     setQuizEndTime(null);
   };
 
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  };
+
   const getTimerColor = () => {
-    const ratio = timeLeft / 40; // Time ratio from 0 to 1
+    const ratio = timeLeft / 600; // Time ratio from 0 to 1
     const red = Math.floor((1 - ratio) * 255); // Increases red as time decreases
     const green = Math.floor(ratio * 255); // Decreases green as time decreases
     return `rgb(${red}, ${green}, 0)`; // Transition from green to red
@@ -177,7 +182,7 @@ const QuizDashboard = () => {
           left: 0,
           right: 0,
           bottom: 0,
-          pointerEvents: "none", // To ensure clicks go through to the quiz
+          pointerEvents: "none",
           overflow: "hidden",
         }}
       >
@@ -186,17 +191,15 @@ const QuizDashboard = () => {
             key={index}
             sx={{
               position: "absolute",
-              top: `${Math.random() * 80}%`, // Random percentage for y position
-              left: `${Math.random() * 80}%`, // Random percentage for x position
-              transform: "translate(-50%, -50%)", // Center the icon
-              animation: `softMove ${
-                15 + Math.random() * 10
-              }s ease-in-out infinite alternate`,
+              top: `${Math.random() * 80}%`,
+              left: `${Math.random() * 80}%`,
+              transform: "translate(-50%, -50%)",
+              animation: `softMove ${15 + Math.random() * 10}s ease-in-out infinite alternate`,
             }}
           >
             <IconComponent
               sx={{
-                fontSize: 60 + Math.random() * 40, // Random size
+                fontSize: 60 + Math.random() * 40,
                 color: "rgba(255, 255, 255, 0.5)",
                 animation: `spin 10s linear infinite`,
               }}
@@ -269,7 +272,7 @@ const QuizDashboard = () => {
               }}
             >
               Time Left:{" "}
-              <span style={{ color: getTimerColor() }}>{timeLeft} seconds</span>
+              <span style={{ color: getTimerColor() }}>{formatTime(timeLeft)}</span>
             </Typography>
             <Stepper activeStep={activeStep} alternativeLabel>
               {quizQuestions.map((_, index) => (
@@ -325,7 +328,7 @@ const QuizDashboard = () => {
                       width: "40%",
                     }}
                   >
-                    {activeStep < quizQuestions.length - 1 ? "Next" : "Submite"}
+                    {activeStep < quizQuestions.length - 1 ? "Next" : "Submit"}
                   </Button>
                 </Box>
               </Box>
