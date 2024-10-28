@@ -20,7 +20,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import { Info, Quiz, Timer, CheckCircle, Assignment, Star, School, Book } from "@mui/icons-material"; // Added more icons
+import { Info, Quiz, Timer, CheckCircle } from "@mui/icons-material";
 import Toaster from "../../Helper/Components/Toaster";
 import { GetQuizQuestionApi, PostQuizAnswerApi } from "../../Helper/Api";
 import AppLoading from "../../Helper/Components/AppLoading";
@@ -44,7 +44,8 @@ const QuizDashboard = () => {
   const [toasterMessage, setToasterMessage] = useState("");
   const [toasterType, setToasterType] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false); // State for dialog
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openThankYouModal, setOpenThankYouModal] = useState(false); // State for thank-you modal
 
   const handleCloseToaster = (reason) => {
     if (reason === "clickaway") {
@@ -60,21 +61,21 @@ const QuizDashboard = () => {
   };
 
   const onPostQuizAnswer = async () => {
+    const EndTime = new Date();
+    setQuizEndTime(EndTime.getTime());
     setIsLoading(true);
     const postQuizAnswerData = await PostQuizAnswerApi({
-      score: "100",
       user: 1,
       start_time: quizStartTime,
-      end_time: quizEndTime,
+      end_time: EndTime.getTime(),
       responses: selectedAnswerList,
     });
+    setIsLoading(false);
     if (postQuizAnswerData.status >= 200 && postQuizAnswerData.status <= 300) {
-      setIsLoading(false);
       showToastMessage("Quiz Completed!", "success");
-      resetQuiz();
+      setOpenThankYouModal(true); // Open thank-you modal
     } else {
       resetQuiz();
-      setIsLoading(false);
       showToastMessage('Something went wrong, please try again', "error");
     }
   };
@@ -109,8 +110,6 @@ const QuizDashboard = () => {
         setSelectedAnswer("");
         setSelectedAnswerQId("");
       } else {
-        const EndTime = new Date();
-        setQuizEndTime(EndTime.getTime());
         onPostQuizAnswer();
       }
     }
@@ -119,16 +118,13 @@ const QuizDashboard = () => {
   const getQuizQuestionList = async () => {
     setIsLoading(true);
     const quizQuestionListData = await GetQuizQuestionApi();
-    if (
-      quizQuestionListData.status >= 200 &&
-      quizQuestionListData.status <= 300
-    ) {
+    setIsLoading(false);
+
+    if (quizQuestionListData.status >= 200 && quizQuestionListData.status <= 300) {
       setQuizQuestions(quizQuestionListData.data);
-      setIsLoading(false);
       setIsQuizStarted(true);
       setTimerActive(true);
     } else {
-      setIsLoading(false);
       showToastMessage(quizQuestionListData.data.error, "error");
     }
   };
@@ -174,6 +170,11 @@ const QuizDashboard = () => {
     setOpenDialog(false);
   };
 
+  const handleCloseThankYouModal = () => {
+    setOpenThankYouModal(false);
+    resetQuiz();
+  };
+
   return (
     <Box
       sx={{
@@ -209,8 +210,8 @@ const QuizDashboard = () => {
         <Box
           sx={{
             position: "absolute",
-            top: "5%",
-            left: "5%",
+            top: "10%",
+            left: "10%",
             animation: `softMove 15s ease-in-out infinite alternate`,
           }}
         >
@@ -226,8 +227,8 @@ const QuizDashboard = () => {
         <Box
           sx={{
             position: "absolute",
-            top: "5%",
-            right: "5%",
+            top: "20%",
+            right: "10%",
             animation: `softMove 15s ease-in-out infinite alternate`,
           }}
         >
@@ -244,79 +245,11 @@ const QuizDashboard = () => {
           sx={{
             position: "absolute",
             bottom: "10%",
-            left: "15%",
+            left: "30%",
             animation: `softMove 15s ease-in-out infinite alternate`,
           }}
         >
           <CheckCircle
-            sx={{
-              fontSize: 60,
-              color: "rgba(255, 255, 255, 0.5)",
-              animation: `spin 10s linear infinite`,
-            }}
-          />
-        </Box>
-        {/* Assignment Icon */}
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: "10%",
-            right: "15%",
-            animation: `softMove 15s ease-in-out infinite alternate`,
-          }}
-        >
-          <Assignment
-            sx={{
-              fontSize: 60,
-              color: "rgba(255, 255, 255, 0.5)",
-              animation: `spin 10s linear infinite`,
-            }}
-          />
-        </Box>
-        {/* Star Icon */}
-        <Box
-          sx={{
-            position: "absolute",
-            top: "25%",
-            left: "20%",
-            animation: `softMove 15s ease-in-out infinite alternate`,
-          }}
-        >
-          <Star
-            sx={{
-              fontSize: 60,
-              color: "rgba(255, 255, 255, 0.5)",
-              animation: `spin 10s linear infinite`,
-            }}
-          />
-        </Box>
-        {/* School Icon */}
-        <Box
-          sx={{
-            position: "absolute",
-            top: "25%",
-            right: "20%",
-            animation: `softMove 15s ease-in-out infinite alternate`,
-          }}
-        >
-          <School
-            sx={{
-              fontSize: 60,
-              color: "rgba(255, 255, 255, 0.5)",
-              animation: `spin 10s linear infinite`,
-            }}
-          />
-        </Box>
-        {/* Book Icon */}
-        <Box
-          sx={{
-            position: "absolute",
-            top: "40%",
-            left: "40%",
-            animation: `softMove 15s ease-in-out infinite alternate`,
-          }}
-        >
-          <Book
             sx={{
               fontSize: 60,
               color: "rgba(255, 255, 255, 0.5)",
@@ -329,13 +262,17 @@ const QuizDashboard = () => {
       <Paper
         elevation={3}
         sx={{
-          padding: 4,
-          borderRadius: 2,
+          width: "80%",
+          p: 6,
+          borderRadius: "16px",
+          backgroundColor: "#ffffff",
+          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+
           bgcolor: "rgba(255, 255, 255, 0.9)",
           backdropFilter: "blur(10px)",
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
           zIndex: 1,
           animation: "fadeIn 0.5s",
+
         }}
       >
         {!isQuizStarted ? (
@@ -447,26 +384,34 @@ const QuizDashboard = () => {
                       setSelectedAnswerQId(quizQuestions[activeStep].id);
                     }}
                   >
-                    <FormControlLabel
-                      value={"option_1"}
-                      control={<Radio />}
-                      label={quizQuestions[activeStep].option_1}
-                    />
-                    <FormControlLabel
-                      value={"option_2"}
-                      control={<Radio />}
-                      label={quizQuestions[activeStep].option_2}
-                    />
-                    <FormControlLabel
-                      value={"option_3"}
-                      control={<Radio />}
-                      label={quizQuestions[activeStep].option_3}
-                    />
-                    <FormControlLabel
-                      value={"option_4"}
-                      control={<Radio />}
-                      label={quizQuestions[activeStep].option_4}
-                    />
+                    {quizQuestions[activeStep].option_1 &&
+                      <FormControlLabel
+                        value={quizQuestions[activeStep].option_1}
+                        control={<Radio />}
+                        label={quizQuestions[activeStep].option_1}
+                      />
+                    }
+                    {quizQuestions[activeStep].option_2 &&
+                      <FormControlLabel
+                        value={quizQuestions[activeStep].option_2}
+                        control={<Radio />}
+                        label={quizQuestions[activeStep].option_2}
+                      />
+                    }
+                    {quizQuestions[activeStep].option_3 &&
+                      <FormControlLabel
+                        value={quizQuestions[activeStep].option_3}
+                        control={<Radio />}
+                        label={quizQuestions[activeStep].option_3}
+                      />
+                    }
+                    {quizQuestions[activeStep].option_4 &&
+                      <FormControlLabel
+                        value={quizQuestions[activeStep].option_4}
+                        control={<Radio />}
+                        label={quizQuestions[activeStep].option_4}
+                      />
+                    }
                   </RadioGroup>
                 </FormControl>
                 <Box display="flex" justifyContent="flex-end" mt={2}>
@@ -493,6 +438,28 @@ const QuizDashboard = () => {
           </Box>
         )}
       </Paper>
+
+      {/* Thank You Modal */}
+      <Dialog
+        open={openThankYouModal}
+        onClose={handleCloseThankYouModal}
+        TransitionProps={{
+          onExited: resetQuiz,
+        }}
+        sx={{ backdropFilter: 'blur(5px)' }}
+      >
+        <DialogTitle sx={{ textAlign: "center" }}>Thank You!</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" sx={{ textAlign: "center" }}>
+            Thank you for completing the quiz! Your responses have been recorded.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseThankYouModal} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <style>
         {`
