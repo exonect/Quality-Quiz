@@ -5,6 +5,9 @@ import {
   GET_QUIZ_QUESTION_API_URL,
   POST_QUIZ_ANSWER_API_URL,
   GET_DEPARTMENTS_API_URL,
+  GET_TOP_50_USERS_API_URL,
+  GET_TOP_15_USERS_API_URL,
+  GET_TOP_3_USERS_API_URL,
 } from "./apiURL";
 
 export const signOut = async () => {
@@ -64,6 +67,39 @@ export const GetDepartmentsApi = async (params) => {
     return response;
   } catch (error) {
     console.log("Get Departments Api Api error ======>>>", error);
+    return error?.response;
+  }
+};
+
+export const GetTop50UsersApi = async (params) => {
+  try {
+    const response = await API.get(GET_TOP_50_USERS_API_URL, params);
+    console.log("Get Top 50 Users Api Api response ======>>>", response);
+    return response;
+  } catch (error) {
+    console.log("Get Top 50 Users Api Api error ======>>>", error);
+    return error?.response;
+  }
+};
+
+export const GetTop15UsersApi = async (params) => {
+  try {
+    const response = await API.get(GET_TOP_15_USERS_API_URL, params);
+    console.log("Get Top 15 Users Api Api response ======>>>", response);
+    return response;
+  } catch (error) {
+    console.log("Get Top 15 Users Api Api error ======>>>", error);
+    return error?.response;
+  }
+};
+
+export const GetTop3UsersApi = async (params) => {
+  try {
+    const response = await API.get(GET_TOP_3_USERS_API_URL, params);
+    console.log("Get Top 3 Users Api Api response ======>>>", response);
+    return response;
+  } catch (error) {
+    console.log("Get Top 3 Users Api Api error ======>>>", error);
     return error?.response;
   }
 };

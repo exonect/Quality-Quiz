@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Tabs,
@@ -30,6 +30,12 @@ import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import {
+  // GetTop15UsersApi, GetTop3UsersApi,
+  GetTop50UsersApi,
+} from "../../Helper/Api";
+import Toaster from "../../Helper/Components/Toaster";
+import AppLoading from "../../Helper/Components/AppLoading";
 
 // Sample participant data (60 users)
 const participants = Array.from({ length: 60 }, (_, index) => ({
@@ -48,6 +54,63 @@ const participants = Array.from({ length: 60 }, (_, index) => ({
 const QuizDashboard = () => {
   const [tabValue, setTabValue] = useState(0);
   const [isAscending, setIsAscending] = useState(false);
+  const [openToaster, setOpenToaster] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [toasterMessage, setToasterMessage] = useState("");
+  const [toasterType, setToasterType] = useState("");
+  const [top50UsersList, setTop50UsersList] = useState([]);
+  // const [top15UsersList, setTop15UsersList] = useState([]);
+  // const [top3UsersList, setTop3UsersList] = useState([]);
+
+  const handleCloseToaster = (reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenToaster(false);
+  };
+
+  const showToastMessage = (message, type) => {
+    setToasterMessage(message);
+    setToasterType(type);
+    setOpenToaster(true);
+  };
+
+  // const GetTop3Users = async () => {
+  //   const top3UsersData = await GetTop3UsersApi();
+  //   if (top3UsersData.status >= 200 && top3UsersData.status <= 300) {
+  //     setIsLoading(false);
+  //     setTop3UsersList(top3UsersData.data);
+  //   } else {
+  //     setIsLoading(false);
+  //     showToastMessage("Something went wrong, please try again", "error");
+  //   }
+  // };
+  // const GetTop15Users = async () => {
+  //   const top15UsersData = await GetTop15UsersApi();
+  //   if (top15UsersData.status >= 200 && top15UsersData.status <= 300) {
+  //     setTop15UsersList(top15UsersData.data);
+  //     GetTop3Users()
+  //   } else {
+  //     setIsLoading(false);
+  //     showToastMessage("Something went wrong, please try again", "error");
+  //   }
+  // };
+
+  const GetTop50Users = async () => {
+    const top50UsersData = await GetTop50UsersApi();
+    if (top50UsersData.status >= 200 && top50UsersData.status <= 300) {
+      setTop50UsersList(top50UsersData.data);
+      // GetTop15Users()
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+      showToastMessage("Something went wrong, please try again", "error");
+    }
+  };
+
+  useEffect(() => {
+    GetTop50Users();
+  }, []);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -79,10 +142,11 @@ const QuizDashboard = () => {
     const startY = 20;
 
     doc.autoTable({
-      head: [["Name", "Email", "Score", "Duration"]],
+      head: [["Name", "Email", "Department", "Score", "Duration"]],
       body: data.map((participant) => [
         participant.user_full_name,
         participant.user_email,
+        participant.user_department,
         participant.score,
         participant.duration,
       ]),
@@ -120,6 +184,11 @@ const QuizDashboard = () => {
 
   return (
     <Box className="min-h-screen bg-gradient-to-br from-purple-800 to-blue-600 p-4 text-white">
+      {isLoading && (
+        <div className="flex justify-center items-center h-full left-0 right-0 top-0 bottom-0 absolute bg-black bg-opacity-20 z-[9999999999]">
+          <AppLoading />
+        </div>
+      )}
       <AppBar position="static" elevation={0} className="bg-transparent">
         <Toolbar>
           <Typography variant="h4">Quiz Dashboard</Typography>
@@ -172,8 +241,8 @@ const QuizDashboard = () => {
           centered
         >
           <Tab label="Top 50 Users" />
-          <Tab label="Top 15 Users" />
-          <Tab label="Top 3 Users" />
+          {/* <Tab label="Top 15 Users" />
+          <Tab label="Top 3 Users" /> */}
         </Tabs>
         <div className="flex">
           <Button
@@ -234,6 +303,7 @@ const QuizDashboard = () => {
                   <TableRow>
                     <TableCell>Name</TableCell>
                     <TableCell>Email</TableCell>
+                    <TableCell>Department</TableCell>
                     <TableCell>
                       <Box className="flex items-center">
                         Score
@@ -258,6 +328,7 @@ const QuizDashboard = () => {
                     <TableRow key={participant.user}>
                       <TableCell>{participant.user_full_name}</TableCell>
                       <TableCell>{participant.user_email}</TableCell>
+                      <TableCell>{participant.user_department}</TableCell>
                       <TableCell>{participant.score}</TableCell>
                       <TableCell>{participant.duration}</TableCell>
                     </TableRow>
@@ -268,6 +339,12 @@ const QuizDashboard = () => {
           </Paper>
         </Grid>
       </Grid>
+      <Toaster
+        toasterMessage={toasterMessage}
+        toasterType={toasterType}
+        openToaster={openToaster}
+        handleCloseToaster={handleCloseToaster}
+      />
     </Box>
   );
 };
