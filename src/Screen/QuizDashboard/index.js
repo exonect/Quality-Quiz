@@ -11,8 +11,15 @@ import {
   FormControl,
   Paper,
   Box,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
 } from "@mui/material";
-import { Home, Favorite, Settings, Star, Info } from "@mui/icons-material"; // Example icons
+import { Info } from "@mui/icons-material"; // Info icon
+import { Home, Favorite, Settings, Star } from "@mui/icons-material"; // Example icons
 import Toaster from "../../Helper/Components/Toaster";
 import { GetQuizQuestionApi, PostQuizAnswerApi } from "../../Helper/Api";
 import AppLoading from "../../Helper/Components/AppLoading";
@@ -35,6 +42,8 @@ const QuizDashboard = () => {
   const [openToaster, setOpenToaster] = useState(false);
   const [toasterMessage, setToasterMessage] = useState("");
   const [toasterType, setToasterType] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false); // State for dialog
 
   const handleCloseToaster = (reason) => {
     if (reason === "clickaway") {
@@ -50,13 +59,12 @@ const QuizDashboard = () => {
   };
 
   const onPostQuizAnswer = async () => {
-    const EndTime = new Date();
-    setQuizEndTime(EndTime.getTime());
     setIsLoading(true);
     const postQuizAnswerData = await PostQuizAnswerApi({
+      score: "100",
       user: 1,
       start_time: quizStartTime,
-      end_time: EndTime.getTime(),
+      end_time: quizEndTime,
       responses: selectedAnswerList,
     });
     if (postQuizAnswerData.status >= 200 && postQuizAnswerData.status <= 300) {
@@ -66,7 +74,7 @@ const QuizDashboard = () => {
     } else {
       resetQuiz();
       setIsLoading(false);
-      showToastMessage("Something went wrong, please try again", "error");
+      showToastMessage('Something went wrong, please try again', "error");
     }
   };
 
@@ -100,6 +108,8 @@ const QuizDashboard = () => {
         setSelectedAnswer("");
         setSelectedAnswerQId("");
       } else {
+        const EndTime = new Date();
+        setQuizEndTime(EndTime.getTime());
         onPostQuizAnswer();
       }
     }
@@ -139,15 +149,13 @@ const QuizDashboard = () => {
     setTimerActive(false);
     setQuizStartTime(null);
     setQuizEndTime(null);
+    setAcceptedTerms(false); // Reset terms acceptance
   };
 
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
-    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
-      2,
-      "0"
-    )}`;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   };
 
   const getTimerColor = () => {
@@ -155,6 +163,14 @@ const QuizDashboard = () => {
     const red = Math.floor((1 - ratio) * 255); // Increases red as time decreases
     const green = Math.floor(ratio * 255); // Decreases green as time decreases
     return `rgb(${red}, ${green}, 0)`; // Transition from green to red
+  };
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
   };
 
   return (
@@ -188,7 +204,7 @@ const QuizDashboard = () => {
           overflow: "hidden",
         }}
       >
-        {[Home, Favorite, Settings, Star, Info].map((IconComponent, index) => (
+        {[Home, Favorite, Settings, Star].map((IconComponent, index) => (
           <Box
             key={index}
             sx={{
@@ -196,9 +212,7 @@ const QuizDashboard = () => {
               top: `${Math.random() * 80}%`,
               left: `${Math.random() * 80}%`,
               transform: "translate(-50%, -50%)",
-              animation: `softMove ${
-                15 + Math.random() * 10
-              }s ease-in-out infinite alternate`,
+              animation: `softMove ${15 + Math.random() * 10}s ease-in-out infinite alternate`,
             }}
           >
             <IconComponent
@@ -248,11 +262,48 @@ const QuizDashboard = () => {
               </RadioGroup>
             </FormControl>
             <Box mt={2}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={acceptedTerms}
+                    onChange={() => setAcceptedTerms(!acceptedTerms)}
+                    color="primary"
+                  />
+                }
+                label={
+                  <span>
+                    I accept the terms and conditions 
+                    <IconButton onClick={handleOpenDialog} size="small">
+                      <Info fontSize="inherit" />
+                    </IconButton>
+                  </span>
+                }
+              />
+              <Dialog open={openDialog} onClose={handleCloseDialog}>
+                <DialogTitle>Quiz Rules and Eligibility</DialogTitle>
+                <DialogContent>
+                  <Typography>
+                    <strong>Eligibility:</strong> Must belong to the selected department.<br />
+                    <strong>Format:</strong> 10 multiple-choice questions with four options each.<br />
+                    <strong>Time Limit:</strong> 10 minutes to complete the quiz.<br />
+                    <strong>Auto Submission:</strong> Quiz submits automatically when time is up or if the connection is lost.<br />
+                    <strong>One Answer Only:</strong> No going back once "Next" is clicked.
+                  </Typography>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseDialog} color="primary">
+                    Close
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            </Box>
+
+            <Box mt={2}>
               <Button
                 variant="contained"
                 color="primary"
                 onClick={handleStartQuiz}
-                disabled={!selectedDepartment}
+                disabled={!selectedDepartment || !acceptedTerms}
                 sx={{
                   width: "100%",
                   bgcolor: "#3f51b5",
@@ -276,9 +327,7 @@ const QuizDashboard = () => {
               }}
             >
               Time Left:{" "}
-              <span style={{ color: getTimerColor() }}>
-                {formatTime(timeLeft)}
-              </span>
+              <span style={{ color: getTimerColor() }}>{formatTime(timeLeft)}</span>
             </Typography>
             <Stepper activeStep={activeStep} alternativeLabel>
               {quizQuestions.map((_, index) => (
@@ -300,34 +349,26 @@ const QuizDashboard = () => {
                       setSelectedAnswerQId(quizQuestions[activeStep].id);
                     }}
                   >
-                    {quizQuestions[activeStep].option_1 && (
-                      <FormControlLabel
-                        value={quizQuestions[activeStep].option_1}
-                        control={<Radio />}
-                        label={quizQuestions[activeStep].option_1}
-                      />
-                    )}
-                    {quizQuestions[activeStep].option_2 && (
-                      <FormControlLabel
-                        value={quizQuestions[activeStep].option_2}
-                        control={<Radio />}
-                        label={quizQuestions[activeStep].option_2}
-                      />
-                    )}
-                    {quizQuestions[activeStep].option_3 && (
-                      <FormControlLabel
-                        value={quizQuestions[activeStep].option_3}
-                        control={<Radio />}
-                        label={quizQuestions[activeStep].option_3}
-                      />
-                    )}
-                    {quizQuestions[activeStep].option_4 && (
-                      <FormControlLabel
-                        value={quizQuestions[activeStep].option_4}
-                        control={<Radio />}
-                        label={quizQuestions[activeStep].option_4}
-                      />
-                    )}
+                    <FormControlLabel
+                      value={"option_1"}
+                      control={<Radio />}
+                      label={quizQuestions[activeStep].option_1}
+                    />
+                    <FormControlLabel
+                      value={"option_2"}
+                      control={<Radio />}
+                      label={quizQuestions[activeStep].option_2}
+                    />
+                    <FormControlLabel
+                      value={"option_3"}
+                      control={<Radio />}
+                      label={quizQuestions[activeStep].option_3}
+                    />
+                    <FormControlLabel
+                      value={"option_4"}
+                      control={<Radio />}
+                      label={quizQuestions[activeStep].option_4}
+                    />
                   </RadioGroup>
                 </FormControl>
                 <Box display="flex" justifyContent="flex-end" mt={2}>
