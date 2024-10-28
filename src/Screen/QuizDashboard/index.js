@@ -22,7 +22,7 @@ import {
 } from "@mui/material";
 import { Info, Quiz, Timer, CheckCircle } from "@mui/icons-material";
 import Toaster from "../../Helper/Components/Toaster";
-import { GetQuizQuestionApi, PostQuizAnswerApi } from "../../Helper/Api";
+import { GetDepartmentsApi, GetQuizQuestionApi, PostQuizAnswerApi } from "../../Helper/Api";
 import AppLoading from "../../Helper/Components/AppLoading";
 
 const departments = ["Department 1", "Department 2", "Department 3"];
@@ -31,6 +31,7 @@ const QuizDashboard = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [quizQuestions, setQuizQuestions] = useState([]);
   const [selectedAnswerList, setSelectedAnswerList] = useState([]);
+  const [departmentsList, setDepartmentsList] = useState([]);
   const [quizStartTime, setQuizStartTime] = useState(null);
   const [quizEndTime, setQuizEndTime] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState("");
@@ -38,7 +39,7 @@ const QuizDashboard = () => {
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [isQuizStarted, setIsQuizStarted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [timerActive, setTimerActive] = useState(false);
   const [openToaster, setOpenToaster] = useState(false);
   const [toasterMessage, setToasterMessage] = useState("");
@@ -46,6 +47,21 @@ const QuizDashboard = () => {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [openThankYouModal, setOpenThankYouModal] = useState(false); // State for thank-you modal
+
+  const onGetDepartments = async () => {;
+    const getDepartments = await GetDepartmentsApi();
+    if (getDepartments.status >= 200 && getDepartments.status <= 300) {
+      setIsLoading(false);
+      setDepartmentsList(getDepartments.data)
+    } else {
+      setIsLoading(false);
+      showToastMessage('Something went wrong, please try again', "error");
+    }
+  };
+
+  useEffect(() => {
+    onGetDepartments()
+  }, [])
 
   const handleCloseToaster = (reason) => {
     if (reason === "clickaway") {
@@ -289,9 +305,9 @@ const QuizDashboard = () => {
                 <MenuItem value="" disabled>
                   Select Department
                 </MenuItem>
-                {departments.map((dept, index) => (
-                  <MenuItem key={index} value={dept}>
-                    {dept}
+                {departmentsList.map((dept, index) => (
+                  <MenuItem key={index} value={dept.department}>
+                    {dept.department}
                   </MenuItem>
                 ))}
               </Select>

@@ -4,6 +4,7 @@ import {
   LOGIN_WITH_SSO_API_URL,
   GET_QUIZ_QUESTION_API_URL,
   POST_QUIZ_ANSWER_API_URL,
+  GET_DEPARTMENTS_API_URL,
 } from "./apiURL";
 
 export const signOut = async () => {
@@ -52,6 +53,17 @@ export const PostQuizAnswerApi = async (params) => {
     return response;
   } catch (error) {
     console.log("Post Quiz Answer Api Api error ======>>>", error);
+    return error?.response;
+  }
+};
+
+export const GetDepartmentsApi = async (params) => {
+  try {
+    const response = await API.get(GET_DEPARTMENTS_API_URL, params);
+    console.log("Get Departments Api Api response ======>>>", response);
+    return response;
+  } catch (error) {
+    console.log("Get Departments Api Api error ======>>>", error);
     return error?.response;
   }
 };

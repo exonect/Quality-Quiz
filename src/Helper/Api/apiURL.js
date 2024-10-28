@@ -8,3 +8,5 @@ export const POST_QUIZ_ANSWER_API_URL = '/quiz/response/';
 export const GET_TOP_50_USERS_API_URL = '/top-50-users/';
 export const GET_TOP_15_USERS_API_URL = '/top-15-users/';
 export const GET_TOP_3_USERS_API_URL = '/top-3-users/';
+
+export const GET_DEPARTMENTS_API_URL = '/departments-get/';
