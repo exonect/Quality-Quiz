@@ -1,5 +1,6 @@
 {
   "name": "quality_quiz_web",
+  "homepage": "/tbwes-quality-quiz/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

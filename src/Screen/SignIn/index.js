@@ -48,7 +48,7 @@ const SignIn = () => {
           // );
           localStorage.setItem("userInfo", JSON.stringify(ssoAPIRes.detail));
           setApiStore({ ...apiStore, login: ssoAPIRes.detail });
-          navigate("/sales/dashboard");
+          navigate("/quiz/dashboard");
           window.location.reload();
           if (apiStore?.newlyCreateedProject) {
             delete apiStore["newlyCreateedProject"];

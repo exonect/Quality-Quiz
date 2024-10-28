@@ -6,7 +6,7 @@ import { Images } from "./Helper/Assets/images";
 import AppContextProvider from "./Helper/Context/AppContextProvider";
 import theme from "./theme";
 
-const Dashboard = lazy(() => import("./Screen/Dashboard"));
+const QuizDashboard = lazy(() => import("./Screen/QuizDashboard"));
 const SignIn = lazy(() => import("./Screen/SignIn"));
 const NotFound = lazy(() => import("./Screen/NotFound"));
 const Home = lazy(() => import("./Screen/Home"));
@@ -35,7 +35,7 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <BrowserRouter>
+      <BrowserRouter basename="/tbwes-quality-quiz/">
         <AppContextProvider>
           {isAppLoading ? (
             <div className="bg-[#fff] h-[100vh] w-[100vw] flex flex-col justify-center items-center">
@@ -69,11 +69,11 @@ const App = () => {
                       >
                         <Routes>
                           <Route
-                            path="/dashboard"
-                            element={<Dashboard />}
+                            path="/quiz/dashboard"
+                            element={<QuizDashboard />}
                           />
                           <Route
-                            path="/home"
+                            path="/dashboard"
                             element={<Home />}
                           />
                           <Route path="/" element={<Welcome />} />

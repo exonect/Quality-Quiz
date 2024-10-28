@@ -50,12 +50,13 @@ const QuizDashboard = () => {
   };
 
   const onPostQuizAnswer = async () => {
+    const EndTime = new Date();
+    setQuizEndTime(EndTime.getTime());
     setIsLoading(true);
     const postQuizAnswerData = await PostQuizAnswerApi({
-      score: "100",
       user: 1,
       start_time: quizStartTime,
-      end_time: quizEndTime,
+      end_time: EndTime.getTime(),
       responses: selectedAnswerList,
     });
     if (postQuizAnswerData.status >= 200 && postQuizAnswerData.status <= 300) {
@@ -65,7 +66,7 @@ const QuizDashboard = () => {
     } else {
       resetQuiz();
       setIsLoading(false);
-      showToastMessage('Something went wrong, please try again', "error");
+      showToastMessage("Something went wrong, please try again", "error");
     }
   };
 
@@ -99,8 +100,6 @@ const QuizDashboard = () => {
         setSelectedAnswer("");
         setSelectedAnswerQId("");
       } else {
-        const EndTime = new Date();
-        setQuizEndTime(EndTime.getTime());
         onPostQuizAnswer();
       }
     }
@@ -145,7 +144,10 @@ const QuizDashboard = () => {
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
-    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+      2,
+      "0"
+    )}`;
   };
 
   const getTimerColor = () => {
@@ -194,7 +196,9 @@ const QuizDashboard = () => {
               top: `${Math.random() * 80}%`,
               left: `${Math.random() * 80}%`,
               transform: "translate(-50%, -50%)",
-              animation: `softMove ${15 + Math.random() * 10}s ease-in-out infinite alternate`,
+              animation: `softMove ${
+                15 + Math.random() * 10
+              }s ease-in-out infinite alternate`,
             }}
           >
             <IconComponent
@@ -272,7 +276,9 @@ const QuizDashboard = () => {
               }}
             >
               Time Left:{" "}
-              <span style={{ color: getTimerColor() }}>{formatTime(timeLeft)}</span>
+              <span style={{ color: getTimerColor() }}>
+                {formatTime(timeLeft)}
+              </span>
             </Typography>
             <Stepper activeStep={activeStep} alternativeLabel>
               {quizQuestions.map((_, index) => (
@@ -294,26 +300,34 @@ const QuizDashboard = () => {
                       setSelectedAnswerQId(quizQuestions[activeStep].id);
                     }}
                   >
-                    <FormControlLabel
-                      value={"option_1"}
-                      control={<Radio />}
-                      label={quizQuestions[activeStep].option_1}
-                    />
-                    <FormControlLabel
-                      value={"option_2"}
-                      control={<Radio />}
-                      label={quizQuestions[activeStep].option_2}
-                    />
-                    <FormControlLabel
-                      value={"option_3"}
-                      control={<Radio />}
-                      label={quizQuestions[activeStep].option_3}
-                    />
-                    <FormControlLabel
-                      value={"option_4"}
-                      control={<Radio />}
-                      label={quizQuestions[activeStep].option_4}
-                    />
+                    {quizQuestions[activeStep].option_1 && (
+                      <FormControlLabel
+                        value={quizQuestions[activeStep].option_1}
+                        control={<Radio />}
+                        label={quizQuestions[activeStep].option_1}
+                      />
+                    )}
+                    {quizQuestions[activeStep].option_2 && (
+                      <FormControlLabel
+                        value={quizQuestions[activeStep].option_2}
+                        control={<Radio />}
+                        label={quizQuestions[activeStep].option_2}
+                      />
+                    )}
+                    {quizQuestions[activeStep].option_3 && (
+                      <FormControlLabel
+                        value={quizQuestions[activeStep].option_3}
+                        control={<Radio />}
+                        label={quizQuestions[activeStep].option_3}
+                      />
+                    )}
+                    {quizQuestions[activeStep].option_4 && (
+                      <FormControlLabel
+                        value={quizQuestions[activeStep].option_4}
+                        control={<Radio />}
+                        label={quizQuestions[activeStep].option_4}
+                      />
+                    )}
                   </RadioGroup>
                 </FormControl>
                 <Box display="flex" justifyContent="flex-end" mt={2}>
