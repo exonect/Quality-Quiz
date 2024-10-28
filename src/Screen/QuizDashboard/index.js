@@ -17,9 +17,10 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  Select,
+  MenuItem,
 } from "@mui/material";
-import { Info } from "@mui/icons-material"; // Info icon
-import { Home, Favorite, Settings, Star } from "@mui/icons-material"; // Example icons
+import { Info, Quiz, Timer, CheckCircle, Assignment, Star, School, Book } from "@mui/icons-material"; // Added more icons
 import Toaster from "../../Helper/Components/Toaster";
 import { GetQuizQuestionApi, PostQuizAnswerApi } from "../../Helper/Api";
 import AppLoading from "../../Helper/Components/AppLoading";
@@ -204,62 +205,159 @@ const QuizDashboard = () => {
           overflow: "hidden",
         }}
       >
-        {[Home, Favorite, Settings, Star].map((IconComponent, index) => (
-          <Box
-            key={index}
+        {/* Quiz Icon */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: "5%",
+            left: "5%",
+            animation: `softMove 15s ease-in-out infinite alternate`,
+          }}
+        >
+          <Quiz
             sx={{
-              position: "absolute",
-              top: `${Math.random() * 80}%`,
-              left: `${Math.random() * 80}%`,
-              transform: "translate(-50%, -50%)",
-              animation: `softMove ${15 + Math.random() * 10}s ease-in-out infinite alternate`,
+              fontSize: 60,
+              color: "rgba(255, 255, 255, 0.5)",
+              animation: `spin 10s linear infinite`,
             }}
-          >
-            <IconComponent
-              sx={{
-                fontSize: 60 + Math.random() * 40,
-                color: "rgba(255, 255, 255, 0.5)",
-                animation: `spin 10s linear infinite`,
-              }}
-            />
-          </Box>
-        ))}
+          />
+        </Box>
+        {/* Timer Icon */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: "5%",
+            right: "5%",
+            animation: `softMove 15s ease-in-out infinite alternate`,
+          }}
+        >
+          <Timer
+            sx={{
+              fontSize: 60,
+              color: "rgba(255, 255, 255, 0.5)",
+              animation: `spin 10s linear infinite`,
+            }}
+          />
+        </Box>
+        {/* Check Circle Icon */}
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: "10%",
+            left: "15%",
+            animation: `softMove 15s ease-in-out infinite alternate`,
+          }}
+        >
+          <CheckCircle
+            sx={{
+              fontSize: 60,
+              color: "rgba(255, 255, 255, 0.5)",
+              animation: `spin 10s linear infinite`,
+            }}
+          />
+        </Box>
+        {/* Assignment Icon */}
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: "10%",
+            right: "15%",
+            animation: `softMove 15s ease-in-out infinite alternate`,
+          }}
+        >
+          <Assignment
+            sx={{
+              fontSize: 60,
+              color: "rgba(255, 255, 255, 0.5)",
+              animation: `spin 10s linear infinite`,
+            }}
+          />
+        </Box>
+        {/* Star Icon */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: "25%",
+            left: "20%",
+            animation: `softMove 15s ease-in-out infinite alternate`,
+          }}
+        >
+          <Star
+            sx={{
+              fontSize: 60,
+              color: "rgba(255, 255, 255, 0.5)",
+              animation: `spin 10s linear infinite`,
+            }}
+          />
+        </Box>
+        {/* School Icon */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: "25%",
+            right: "20%",
+            animation: `softMove 15s ease-in-out infinite alternate`,
+          }}
+        >
+          <School
+            sx={{
+              fontSize: 60,
+              color: "rgba(255, 255, 255, 0.5)",
+              animation: `spin 10s linear infinite`,
+            }}
+          />
+        </Box>
+        {/* Book Icon */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: "40%",
+            left: "40%",
+            animation: `softMove 15s ease-in-out infinite alternate`,
+          }}
+        >
+          <Book
+            sx={{
+              fontSize: 60,
+              color: "rgba(255, 255, 255, 0.5)",
+              animation: `spin 10s linear infinite`,
+            }}
+          />
+        </Box>
       </Box>
 
       <Paper
         elevation={3}
         sx={{
-          width: "80%",
-          p: 6,
-          borderRadius: "16px",
-          backgroundColor: "#ffffff",
-          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-          transition: "transform 0.3s ease-in-out",
-          "&:hover": { transform: "scale(1.02)" },
+          padding: 4,
+          borderRadius: 2,
+          bgcolor: "rgba(255, 255, 255, 0.9)",
+          backdropFilter: "blur(10px)",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
+          zIndex: 1,
+          animation: "fadeIn 0.5s",
         }}
       >
         {!isQuizStarted ? (
-          <Box textAlign="center">
-            <Typography
-              variant="h4"
-              sx={{ mb: 4, fontWeight: "bold", color: "#333" }}
-            >
-              Select Department
+          <Box>
+            <Typography variant="h4" sx={{ textAlign: "center", mb: 4 }}>
+              Welcome to the Quiz
             </Typography>
-            <FormControl component="fieldset">
-              <RadioGroup
+            <FormControl fullWidth variant="outlined">
+              <Select
                 value={selectedDepartment}
                 onChange={handleDepartmentChange}
+                displayEmpty
               >
+                <MenuItem value="" disabled>
+                  Select Department
+                </MenuItem>
                 {departments.map((dept, index) => (
-                  <FormControlLabel
-                    key={index}
-                    value={dept}
-                    control={<Radio />}
-                    label={<span style={{ fontWeight: "bold" }}>{dept}</span>}
-                  />
+                  <MenuItem key={index} value={dept}>
+                    {dept}
+                  </MenuItem>
                 ))}
-              </RadioGroup>
+              </Select>
             </FormControl>
             <Box mt={2}>
               <FormControlLabel
