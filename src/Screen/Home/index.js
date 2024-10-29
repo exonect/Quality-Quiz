@@ -25,7 +25,11 @@ import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { GetTop50UsersApi } from "../../Helper/Api";
+import {
+  ExportAllUsersDataApi,
+  ExportTop50UsersDataApi,
+  GetTop50UsersApi,
+} from "../../Helper/Api";
 import Toaster from "../../Helper/Components/Toaster";
 import AppLoading from "../../Helper/Components/AppLoading";
 import SimpleBarChart from "../../Helper/Components/SimpleBarChart";
@@ -185,6 +189,27 @@ const QuizDashboard = () => {
     }
   };
 
+  const exportTop50Users = async () => {
+    const exportTop50UsersData = await ExportTop50UsersDataApi();
+    if (
+      exportTop50UsersData.status >= 200 &&
+      exportTop50UsersData.status <= 300
+    ) {
+      showToastMessage("Download file Successfully", "success");
+    } else {
+      showToastMessage("Something went wrong, please try again", "error");
+    }
+  };
+
+  const exportAllUsers = async () => {
+    const exportAllUsersData = await ExportAllUsersDataApi({ roundNumber: 1 });
+    if (exportAllUsersData.status >= 200 && exportAllUsersData.status <= 300) {
+      showToastMessage("Download file Successfully", "success");
+    } else {
+      showToastMessage("Something went wrong, please try again", "error");
+    }
+  };
+
   return (
     <Box className="min-h-screen bg-gradient-to-br from-purple-800 to-blue-600 p-4 text-white">
       {isLoading && (
@@ -312,9 +337,7 @@ const QuizDashboard = () => {
                 onChange={(e) => setSelectedDepartment(e.target.value)}
                 label="Department"
               >
-                <MenuItem value="">
-                  All
-                </MenuItem>
+                <MenuItem value="">All</MenuItem>
                 {departments.map((dept) => (
                   <MenuItem key={dept} value={dept}>
                     {dept}
@@ -326,7 +349,9 @@ const QuizDashboard = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={downloadAllParticipantsPDF}
+            onClick={() => {
+              exportAllUsers();
+            }}
             className="ml-4"
           >
             Export All Data
@@ -335,7 +360,9 @@ const QuizDashboard = () => {
             <Button
               variant="contained"
               color="secondary"
-              onClick={downloadSelectedParticipantsPDF}
+              onClick={() => {
+                exportTop50Users();
+              }}
             >
               {getDownloadButtonLabel()}
             </Button>

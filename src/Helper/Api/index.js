@@ -8,6 +8,8 @@ import {
   GET_TOP_50_USERS_API_URL,
   GET_TOP_15_USERS_API_URL,
   GET_TOP_3_USERS_API_URL,
+  EXPORT_TOP_50_USERS_API_URL,
+  EXPORT_ALL_USERS_API_URL,
 } from "./apiURL";
 
 export const signOut = async () => {
@@ -100,6 +102,71 @@ export const GetTop3UsersApi = async (params) => {
     return response;
   } catch (error) {
     console.log("Get Top 3 Users Api Api error ======>>>", error);
+    return error?.response;
+  }
+};
+
+export const ExportTop50UsersDataApi = async (params) => {
+  try {
+    const response = await API.post(EXPORT_TOP_50_USERS_API_URL, params, {
+      responseType: "blob",
+    });
+    const contentDisposition = response.headers['content-disposition'];
+
+    const filename = contentDisposition
+      ? contentDisposition
+        .split("filename=")[1]
+        .split(";")[0]
+        .trim()
+        .replace(/['"]/g, "")
+      : "download.xlsx";
+
+    const href = URL.createObjectURL(response.data);
+    const link = document.createElement("a");
+    link.href = href;
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+    console.log("Export Top 50 Users Data Api response ======>>>", response);
+    return response;
+  } catch (error) {
+    console.log("Export Top 50 Users Data Api error ======>>>", error);
+    return error?.response;
+  }
+};
+
+
+export const ExportAllUsersDataApi = async (params) => {
+  try {
+    const response = await API.post(`${EXPORT_ALL_USERS_API_URL}-${params.roundNumber}-responses/`, params, {
+      responseType: "blob",
+    });
+    const contentDisposition = response.headers['content-disposition'];
+
+    const filename = contentDisposition
+      ? contentDisposition
+        .split("filename=")[1]
+        .split(";")[0]
+        .trim()
+        .replace(/['"]/g, "")
+      : "download.xlsx";
+
+    const href = URL.createObjectURL(response.data);
+    const link = document.createElement("a");
+    link.href = href;
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+    console.log("Export All Users Data Api response ======>>>", response);
+    return response;
+  } catch (error) {
+    console.log("Export All Users Data Api error ======>>>", error);
     return error?.response;
   }
 };

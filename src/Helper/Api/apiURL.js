@@ -10,3 +10,6 @@ export const GET_TOP_15_USERS_API_URL = '/top-15-users/';
 export const GET_TOP_3_USERS_API_URL = '/top-3-users/';
 
 export const GET_DEPARTMENTS_API_URL = '/departments-get/';
+
+export const EXPORT_TOP_50_USERS_API_URL = '/export-top-50-users/';
+export const EXPORT_ALL_USERS_API_URL = '/export-round';
