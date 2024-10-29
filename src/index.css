@@ -1,13 +1,132 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "Josefin Sans", sans-serif;
+    scroll-behavior: smooth;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* //For Theme../ */
+:root {
+    --bg-sideNavbar-dark: linear-gradient(195deg, #42424a, #191919);
+    --bg-footer-dark: #1a1a1ade;
+    --theme-color: #0e1322;
+    --theme-bg-color: #7c8fc9;
+    --white-color: white;
+    --black-color: black;
+    --active-status-bg: rgba(40, 199, 111, .12);
+    --inactive-status-bg: rgba(234, 84, 85, .12)
+}
+
+.mainContainer {
+    padding: 50px !important;
+    width: 90%;
+}
+
+/* Custom ScrollBar css */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(111, 110, 110, 0.3);
+    background-color: #bbbbbb;
+}
+
+.modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: auto;
+    background-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    padding: 10px 20px 10px 20px;
+    border-radius: 5px;
+}
+
+.css-3dzjca-MuiPaper-root-MuiPopover-paper-MuiMenu-paper {
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px !important;
+}
+
+/* .css-1u2w381-MuiModal-root-MuiDrawer-root {
+    z-index: 99999 !important;
+} */
+
+.css-1u2w381-MuiModal-root-MuiDrawer-root {
+    z-index: 999999 !important;
+}
+
+.css-10nakn3-MuiModal-root-MuiPopover-root-MuiMenu-root {
+    z-index: 9999999 !important;
+}
+
+.base-Modal-root {
+    z-index: 999999 !important;
+}
+
+.MuiModal-root {
+    z-index: 999999 !important;
+}
+
+.Mui-selected {
+    background-color: #7c8fc9 !important;
+    color: #fff !important;
+}
+
+@media screen and (min-width: 320px) {
+    .modal {
+        width: 300px;
+        overflow-y: auto;
+        max-height: 96vh;
+    }
+
+    .quillEditor {
+        height: 40vh;
+    }
+}
+
+@media screen and (max-width:374px) and (min-width: 321px) {
+    .quillEditor {
+        height: 43vh !important;
+    }
+}
+
+@media screen and (max-width:425px) and (min-width: 375px) {
+    .quillEditor {
+        height: 50vh !important;
+    }
+}
+
+@media screen and (max-width:650px) and (min-width: 321px) {
+    .modal {
+        width: 80%;
+        overflow-y: auto;
+        max-height: 95vh;
+    }
+
+    .quillEditor {
+        height: 55vh;
+    }
+}
+
+@media screen and (min-width:651px) {
+    .modal {
+        width: 600px;
+        overflow-y: auto;
+        max-height: 90vh;
+    }
 }
