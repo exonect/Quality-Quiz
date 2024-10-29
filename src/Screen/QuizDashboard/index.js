@@ -22,7 +22,12 @@ import {
 } from "@mui/material";
 import { Info, Quiz, Timer, CheckCircle } from "@mui/icons-material";
 import Toaster from "../../Helper/Components/Toaster";
-import { GetDepartmentsApi, GetQuizQuestionApi, PostQuizAnswerApi } from "../../Helper/Api";
+import {
+  GetDepartmentsApi,
+  GetQuizQuestionApi,
+  PostQuizAnswerApi,
+  PostUserDepartmentApi,
+} from "../../Helper/Api";
 import AppLoading from "../../Helper/Components/AppLoading";
 
 const departments = ["Department 1", "Department 2", "Department 3"];
@@ -48,20 +53,20 @@ const QuizDashboard = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [openThankYouModal, setOpenThankYouModal] = useState(false); // State for thank-you modal
 
-  const onGetDepartments = async () => {;
+  const onGetDepartments = async () => {
     const getDepartments = await GetDepartmentsApi();
     if (getDepartments.status >= 200 && getDepartments.status <= 300) {
       setIsLoading(false);
-      setDepartmentsList(getDepartments.data)
+      setDepartmentsList(getDepartments.data);
     } else {
       setIsLoading(false);
-      showToastMessage('Something went wrong, please try again', "error");
+      showToastMessage("Something went wrong, please try again", "error");
     }
   };
 
   useEffect(() => {
-    onGetDepartments()
-  }, [])
+    onGetDepartments();
+  }, []);
 
   const handleCloseToaster = (reason) => {
     if (reason === "clickaway") {
@@ -86,13 +91,14 @@ const QuizDashboard = () => {
       end_time: EndTime.getTime(),
       responses: selectedAnswerList,
     });
-    setIsLoading(false);
     if (postQuizAnswerData.status >= 200 && postQuizAnswerData.status <= 300) {
+      setIsLoading(false);
       showToastMessage("Quiz Completed!", "success");
       setOpenThankYouModal(true); // Open thank-you modal
     } else {
       resetQuiz();
-      showToastMessage('Something went wrong, please try again', "error");
+      showToastMessage("Something went wrong, please try again", "error");
+      setIsLoading(false);
     }
   };
 
@@ -134,21 +140,44 @@ const QuizDashboard = () => {
   const getQuizQuestionList = async () => {
     setIsLoading(true);
     const quizQuestionListData = await GetQuizQuestionApi();
-    setIsLoading(false);
 
-    if (quizQuestionListData.status >= 200 && quizQuestionListData.status <= 300) {
+    if (
+      quizQuestionListData.status >= 200 &&
+      quizQuestionListData.status <= 300
+    ) {
+      setIsLoading(false);
       setQuizQuestions(quizQuestionListData.data);
       setIsQuizStarted(true);
       setTimerActive(true);
     } else {
-      showToastMessage(quizQuestionListData.data.error, "error");
+      setIsLoading(false);
+      if (quizQuestionListData?.data?.error) {
+        showToastMessage(quizQuestionListData.data.error, "error");
+      } else {
+        showToastMessage("Something went wrong, please try again", "error");
+      }
     }
   };
 
-  const handleStartQuiz = () => {
-    const StartTime = new Date();
-    setQuizStartTime(StartTime.getTime());
-    getQuizQuestionList();
+  const handleStartQuiz = async () => {
+    setIsLoading(true);
+    const userDepartmentData = await PostUserDepartmentApi({
+      department: selectedDepartment,
+      email: "",
+    });
+    if (userDepartmentData.status >= 200 && userDepartmentData.status <= 300) {
+      setIsLoading(false);
+      const StartTime = new Date();
+      setQuizStartTime(StartTime.getTime());
+      getQuizQuestionList();
+    } else {
+      setIsLoading(false);
+      if (userDepartmentData?.data?.error) {
+        showToastMessage(userDepartmentData.data.error, "error");
+      } else {
+        showToastMessage("Something went wrong, please try again", "error");
+      }
+    }
   };
 
   const resetQuiz = () => {
@@ -168,7 +197,10 @@ const QuizDashboard = () => {
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
-    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+      2,
+      "0"
+    )}`;
   };
 
   const getTimerColor = () => {
@@ -288,7 +320,6 @@ const QuizDashboard = () => {
           backdropFilter: "blur(10px)",
           zIndex: 1,
           animation: "fadeIn 0.5s",
-
         }}
       >
         {!isQuizStarted ? (
@@ -323,7 +354,7 @@ const QuizDashboard = () => {
                 }
                 label={
                   <span>
-                    I accept the terms and conditions 
+                    I accept the terms and conditions
                     <IconButton onClick={handleOpenDialog} size="small">
                       <Info fontSize="inherit" />
                     </IconButton>
@@ -334,11 +365,20 @@ const QuizDashboard = () => {
                 <DialogTitle>Quiz Rules and Eligibility</DialogTitle>
                 <DialogContent>
                   <Typography>
-                    <strong>Eligibility:</strong> Must belong to the selected department.<br />
-                    <strong>Format:</strong> 10 multiple-choice questions with four options each.<br />
-                    <strong>Time Limit:</strong> 10 minutes to complete the quiz.<br />
-                    <strong>Auto Submission:</strong> Quiz submits automatically when time is up or if the connection is lost.<br />
-                    <strong>One Answer Only:</strong> No going back once "Next" is clicked.
+                    <strong>Eligibility:</strong> Must belong to the selected
+                    department.
+                    <br />
+                    <strong>Format:</strong> 10 multiple-choice questions with
+                    four options each.
+                    <br />
+                    <strong>Time Limit:</strong> 10 minutes to complete the
+                    quiz.
+                    <br />
+                    <strong>Auto Submission:</strong> Quiz submits automatically
+                    when time is up or if the connection is lost.
+                    <br />
+                    <strong>One Answer Only:</strong> No going back once "Next"
+                    is clicked.
                   </Typography>
                 </DialogContent>
                 <DialogActions>
@@ -378,7 +418,9 @@ const QuizDashboard = () => {
               }}
             >
               Time Left:{" "}
-              <span style={{ color: getTimerColor() }}>{formatTime(timeLeft)}</span>
+              <span style={{ color: getTimerColor() }}>
+                {formatTime(timeLeft)}
+              </span>
             </Typography>
             <Stepper activeStep={activeStep} alternativeLabel>
               {quizQuestions.map((_, index) => (
@@ -400,34 +442,34 @@ const QuizDashboard = () => {
                       setSelectedAnswerQId(quizQuestions[activeStep].id);
                     }}
                   >
-                    {quizQuestions[activeStep].option_1 &&
+                    {quizQuestions[activeStep].option_1 && (
                       <FormControlLabel
                         value={quizQuestions[activeStep].option_1}
                         control={<Radio />}
                         label={quizQuestions[activeStep].option_1}
                       />
-                    }
-                    {quizQuestions[activeStep].option_2 &&
+                    )}
+                    {quizQuestions[activeStep].option_2 && (
                       <FormControlLabel
                         value={quizQuestions[activeStep].option_2}
                         control={<Radio />}
                         label={quizQuestions[activeStep].option_2}
                       />
-                    }
-                    {quizQuestions[activeStep].option_3 &&
+                    )}
+                    {quizQuestions[activeStep].option_3 && (
                       <FormControlLabel
                         value={quizQuestions[activeStep].option_3}
                         control={<Radio />}
                         label={quizQuestions[activeStep].option_3}
                       />
-                    }
-                    {quizQuestions[activeStep].option_4 &&
+                    )}
+                    {quizQuestions[activeStep].option_4 && (
                       <FormControlLabel
                         value={quizQuestions[activeStep].option_4}
                         control={<Radio />}
                         label={quizQuestions[activeStep].option_4}
                       />
-                    }
+                    )}
                   </RadioGroup>
                 </FormControl>
                 <Box display="flex" justifyContent="flex-end" mt={2}>
@@ -462,12 +504,13 @@ const QuizDashboard = () => {
         TransitionProps={{
           onExited: resetQuiz,
         }}
-        sx={{ backdropFilter: 'blur(5px)' }}
+        sx={{ backdropFilter: "blur(5px)" }}
       >
         <DialogTitle sx={{ textAlign: "center" }}>Thank You!</DialogTitle>
         <DialogContent>
           <Typography variant="body1" sx={{ textAlign: "center" }}>
-            Thank you for completing the quiz! Your responses have been recorded.
+            Thank you for completing the quiz! Your responses have been
+            recorded.
           </Typography>
         </DialogContent>
         <DialogActions>

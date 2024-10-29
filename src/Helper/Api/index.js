@@ -10,6 +10,7 @@ import {
   GET_TOP_3_USERS_API_URL,
   EXPORT_TOP_50_USERS_API_URL,
   EXPORT_ALL_USERS_API_URL,
+  POST_USER_DEPARTMENT_API_URL,
 } from "./apiURL";
 
 export const signOut = async () => {
@@ -167,6 +168,17 @@ export const ExportAllUsersDataApi = async (params) => {
     return response;
   } catch (error) {
     console.log("Export All Users Data Api error ======>>>", error);
+    return error?.response;
+  }
+};
+
+export const PostUserDepartmentApi = async (params) => {
+  try {
+    const response = await API.post(`${POST_USER_DEPARTMENT_API_URL}`, params);
+    console.log("Post User Department Api Api response ======>>>", response);
+    return response;
+  } catch (error) {
+    console.log("Post User Department Api Api error ======>>>", error);
     return error?.response;
   }
 };
