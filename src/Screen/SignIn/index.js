@@ -179,14 +179,18 @@ const SignIn = () => {
             </div>
             <Box className="py-2 justify-center items-center text-center">
               <Typography fontWeight="medium" className="!text-[22px]">
-                Welcome to TBWES Quality Quiz
-              </Typography>
-              <Typography className="!text-[18px]" fontWeight="medium">
-                Sign in
+                TBWES Quality Quiz
               </Typography>
             </Box>
-            <Box pt={2} px={3} className="w-full">
-              <Box mt={4} mb={1}>
+            <Box px={3} className="w-full">
+              <Box
+                mt={1}
+                mb={1}
+                className="py-2 justify-center items-center text-center"
+              >
+                <Typography className="!text-[18px] !mb-[8px]" fontWeight="medium">
+                  Sign in
+                </Typography>
                 <ColorButton
                   className="bg-[#0e1322] text-white px-2 w-[100%]"
                   fullWidth
