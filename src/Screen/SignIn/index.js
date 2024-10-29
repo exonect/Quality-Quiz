@@ -178,10 +178,10 @@ const SignIn = () => {
               />
             </div>
             <Box className="py-2 justify-center items-center text-center">
-              <Typography fontWeight="medium" className="!text-[10px]">
+              <Typography fontWeight="medium" className="!text-[22px]">
                 Welcome to TBWES Quality Quiz
               </Typography>
-              <Typography variant="h4" fontWeight="medium">
+              <Typography className="!text-[18px]" fontWeight="medium">
                 Sign in
               </Typography>
             </Box>
