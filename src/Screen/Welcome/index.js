@@ -9,10 +9,17 @@ const Welcome = () => {
   const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
+    const userRoleData = JSON.parse(localStorage.getItem("userRole"));
     const accessToken = JSON.parse(localStorage.getItem("accessToken"));
-    if (accessToken) {
+    if (accessToken && userRoleData) {
       setIsUserLogdin(true);
-      navigate("/dashboard");
+      setUserRole(userRoleData)
+      if (userRoleData === 'participant') {
+        navigate("/quiz/dashboard");
+      }
+      if (userRoleData === 'jury') {
+        navigate("/dashboard");
+      }
     } else {
       // window.location.reload();
       setIsUserLogdin(false);
