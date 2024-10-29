@@ -34,7 +34,7 @@ export const LoginWithSSOApi = async (params) => {
   try {
     const response = await API.post(`${LOGIN_WITH_SSO_API_URL}`, params);
     console.log("Login With SSO Api response ======>>>", response);
-    return { ...response.data, status: response.status };
+    return { ...response.data, status: response.data.status };
   } catch (error) {
     console.log("Login With SSO Api error ======>>>", error);
     return error?.response;

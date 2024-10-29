@@ -14,13 +14,16 @@ const Welcome = lazy(() => import("./Screen/Welcome"));
 
 const App = () => {
   // const navigate = useNavigate();
+  const [userRole, setUserRole] = useState(null);
   const [isAppLoading, setIsAppLoading] = useState(true);
   const [isUserLogdin, setIsUserLogdin] = useState(null);
 
   useEffect(() => {
+    const userRoleData = JSON.parse(localStorage.getItem("userRole"));
     const accessToken = JSON.parse(localStorage.getItem("accessToken"));
-    if (accessToken) {
+    if (accessToken && userRoleData) {
       setIsUserLogdin(true);
+      setUserRole(userRoleData);
       setTimeout(() => {
         setIsAppLoading(false);
       }, 1500);
@@ -28,6 +31,7 @@ const App = () => {
       setTimeout(() => {
         setIsAppLoading(false);
       }, 1500);
+      setUserRole(null);
       localStorage.clear();
       setIsUserLogdin(false);
     }
@@ -49,38 +53,56 @@ const App = () => {
             </div>
           ) : (
             <>
-              <Suspense fallback={ <div className="bg-[#fff] h-[100vh] w-[100vw] flex flex-col justify-center items-center">
-              <img
-                loading="lazy"
-                src={Images.Logo}
-                alt="thermax_logo"
-                className="w-[100px] h-[auto] mb-[10px]"
-              />
-              <AppLoading />
-            </div>}>
+              <Suspense
+                fallback={
+                  <div className="bg-[#fff] h-[100vh] w-[100vw] flex flex-col justify-center items-center">
+                    <img
+                      loading="lazy"
+                      src={Images.Logo}
+                      alt="thermax_logo"
+                      className="w-[100px] h-[auto] mb-[10px]"
+                    />
+                    <AppLoading />
+                  </div>
+                }
+              >
                 {isUserLogdin === true ? (
                   <div className="flex h-[100vh]">
-                    <div className="flex w-full">
-                      <div
-                        style={{
-                          width: "100%",
-                          overflow: "hidden",
-                        }}
-                      >
-                        <Routes>
-                          <Route
-                            path="/quiz/dashboard"
-                            element={<QuizDashboard />}
-                          />
-                          <Route
-                            path="/dashboard"
-                            element={<Home />}
-                          />
-                          <Route path="/" element={<Welcome />} />
-                          <Route path="*" element={<NotFound />} />
-                        </Routes>
+                    {userRole === "jury" && (
+                      <div className="flex w-full">
+                        <div
+                          style={{
+                            width: "100%",
+                            overflow: "hidden",
+                          }}
+                        >
+                          <Routes>
+                            <Route path="/dashboard" element={<Home />} />
+                            <Route path="/" element={<Welcome />} />
+                            <Route path="*" element={<NotFound />} />
+                          </Routes>
+                        </div>
                       </div>
-                    </div>
+                    )}
+                    {userRole === "participant" && (
+                      <div className="flex w-full">
+                        <div
+                          style={{
+                            width: "100%",
+                            overflow: "hidden",
+                          }}
+                        >
+                          <Routes>
+                            <Route
+                              path="/quiz/dashboard"
+                              element={<QuizDashboard />}
+                            />
+                            <Route path="/" element={<Welcome />} />
+                            <Route path="*" element={<NotFound />} />
+                          </Routes>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <Routes>

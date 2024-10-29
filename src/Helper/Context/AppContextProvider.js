@@ -10,6 +10,7 @@ const AppContextProvider = ({ children }) => {
   
   const value = {
     apiStore,
+    setApiStore,
     isAppLoading,
     setIsAppLoading
   };

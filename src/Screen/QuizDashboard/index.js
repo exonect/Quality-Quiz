@@ -85,8 +85,9 @@ const QuizDashboard = () => {
     const EndTime = new Date();
     setQuizEndTime(EndTime.getTime());
     setIsLoading(true);
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const postQuizAnswerData = await PostQuizAnswerApi({
-      user: 1,
+      user: userInfo.user_id,
       start_time: quizStartTime,
       end_time: EndTime.getTime(),
       responses: selectedAnswerList,
@@ -161,9 +162,10 @@ const QuizDashboard = () => {
 
   const handleStartQuiz = async () => {
     setIsLoading(true);
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const userDepartmentData = await PostUserDepartmentApi({
       department: selectedDepartment,
-      email: "",
+      email: userInfo.user_email,
     });
     if (userDepartmentData.status >= 200 && userDepartmentData.status <= 300) {
       setIsLoading(false);

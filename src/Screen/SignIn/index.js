@@ -25,47 +25,52 @@ const SignIn = () => {
   const [toasterType, setToasterType] = useState("");
   const navigate = useNavigate();
 
+  const onLoginWithSSOApi = async (response) => {
+    const ssoAPIRes = await LoginWithSSOApi({
+      email: response.account.username,
+    });
+    if (ssoAPIRes.status === 200) {
+      localStorage.setItem("isSidebarMove", true);
+      showToastMessage("Login Successfully", "success");
+      localStorage.setItem(
+        "accessToken",
+        JSON.stringify(ssoAPIRes?.detail?.access_token)
+      );
+      localStorage.setItem(
+        "userRole",
+        JSON.stringify(ssoAPIRes?.detail?.user_type)
+      );
+      localStorage.setItem(
+        "refreshToken",
+        JSON.stringify(ssoAPIRes?.detail?.refresh_token)
+      );
+      localStorage.setItem("userInfo", JSON.stringify(ssoAPIRes.detail));
+      setApiStore({ ...apiStore, login: ssoAPIRes.detail });
+      if (ssoAPIRes?.detail?.user_type === 'participant') {
+        navigate("/quiz/dashboard");
+      }
+      if (ssoAPIRes?.detail?.user_type === 'jury') {
+        navigate("/dashboard");
+      }
+      window.location.reload();
+      if (apiStore?.newlyCreateedProject) {
+        delete apiStore["newlyCreateedProject"];
+        setApiStore({
+          ...apiStore,
+        });
+      }
+    }
+  };
+
   const handleLoginButtonSSO = async () => {
     try {
       const response = await msalInstance.loginPopup({
         scopes: ["openid", "profile", "user.read"],
       });
       if (response && response.account) {
-        const ssoAPIRes = await LoginWithSSOApi({
-          email: response.account.username,
-        });
-
-        if (ssoAPIRes.status === 200) {
-          localStorage.setItem("isSidebarMove", true);
-          showToastMessage("Login Successfully", "success");
-          localStorage.setItem(
-            "accessToken",
-            JSON.stringify(ssoAPIRes?.detail?.access_token)
-          );
-          // localStorage.setItem(
-          //   "refreshToken",
-          //   JSON.stringify(ssoAPIRes?.detail?.refresh_token)
-          // );
-          localStorage.setItem("userInfo", JSON.stringify(ssoAPIRes.detail));
-          setApiStore({ ...apiStore, login: ssoAPIRes.detail });
-          navigate("/quiz/dashboard");
-          window.location.reload();
-          if (apiStore?.newlyCreateedProject) {
-            delete apiStore["newlyCreateedProject"];
-            setApiStore({
-              ...apiStore,
-            });
-          }
-        } else if (ssoAPIRes.status === 400) {
-          alert(ssoAPIRes.detail);
-          console.error("ssoAPIRes=====", ssoAPIRes);
-        }
+        onLoginWithSSOApi(response);
       }
     } catch (error) {
-      localStorage.setItem(
-        "accessToken",
-        JSON.stringify('@@@ASDFAGFKARFOFAJFNAOFNNL120394uskjfgjngf#$!@$@$^&%^$#@easlkjdfbalkerjfdnSDFFf;lkjb')
-      );
       showToastMessage("Something went wrong! Please try again.", "error");
       console.error(error);
     }
