@@ -1,14 +1,13 @@
-import { Button, Typography } from "@mui/material";
-// import CircularProgress from '@mui/joy/CircularProgress';
-import Box from "@mui/material/Box";
-import React, { useContext, useEffect, useState } from "react";
+import { CheckCircle, Quiz, Timer } from "@mui/icons-material";
+import { Box, Button, Typography } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginWithSSOApi } from "../../Helper/Api";
 import { Images } from "../../Helper/Assets/images";
 import Toaster from "../../Helper/Components/Toaster";
 import { AppContext } from "../../Helper/Context/AppContextProvider";
 import { msalInstance } from "../../msalConfig";
-import { styled } from "@mui/material/styles";
 
 const ColorButton = styled(Button)(({ theme }) => ({
   color: "#fff",
@@ -46,10 +45,10 @@ const SignIn = () => {
       );
       localStorage.setItem("userInfo", JSON.stringify(ssoAPIRes.detail));
       setApiStore({ ...apiStore, login: ssoAPIRes.detail });
-      if (ssoAPIRes?.detail?.user_type === 'participant') {
+      if (ssoAPIRes?.detail?.user_type === "participant") {
         navigate("/quiz/dashboard");
       }
-      if (ssoAPIRes?.detail?.user_type === 'jury') {
+      if (ssoAPIRes?.detail?.user_type === "jury") {
         navigate("/dashboard");
       }
       window.location.reload();
@@ -90,15 +89,83 @@ const SignIn = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-[100vw] h-[100vh] bg-[#ffffff]">
-      <div className="w-full h-full fixed t-0 b-0 r-0 l-0 ">
-        <img
-          src={Images.QuizBackground}
-          alt="app_background_img"
-          className="w-full h-full fixed t-0 b-0 r-0 l-0"
-        />
-      </div>
-      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        p: 4,
+        position: "relative",
+        overflow: "hidden",
+        background: "linear-gradient(to bottom right, #673ab7, #2196f3)",
+      }}
+    >
+      {/* Background Animated Icons */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          pointerEvents: "none",
+          overflow: "hidden",
+        }}
+      >
+        {/* Quiz Icon */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: "10%",
+            left: "10%",
+            animation: `softMove 15s ease-in-out infinite alternate`,
+          }}
+        >
+          <Quiz
+            sx={{
+              fontSize: 60,
+              color: "rgba(255, 255, 255, 0.5)",
+              animation: `spin 10s linear infinite`,
+            }}
+          />
+        </Box>
+        {/* Timer Icon */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: "20%",
+            right: "10%",
+            animation: `softMove 15s ease-in-out infinite alternate`,
+          }}
+        >
+          <Timer
+            sx={{
+              fontSize: 60,
+              color: "rgba(255, 255, 255, 0.5)",
+              animation: `spin 10s linear infinite`,
+            }}
+          />
+        </Box>
+        {/* Check Circle Icon */}
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: "10%",
+            left: "30%",
+            animation: `softMove 15s ease-in-out infinite alternate`,
+          }}
+        >
+          <CheckCircle
+            sx={{
+              fontSize: 60,
+              color: "rgba(255, 255, 255, 0.5)",
+              animation: `spin 10s linear infinite`,
+            }}
+          />
+        </Box>
+      </Box>
       <div className="w-[95vw] flex flex-col items-center justify-center text-center">
         <div className="flex items-center justify-center flex-col px-14 py-10 max-md:px-5 max-md:max-w-full rounded-[30px] drop-shadow-2xl bg-[#ffffff]">
           <div className="xl:w-[22vw] sm:w-[auto] flex items-center text-start justify-center flex-col">
@@ -138,7 +205,22 @@ const SignIn = () => {
         openToaster={openToaster}
         handleCloseToaster={handleCloseToaster}
       />
-    </div>
+      <style>
+        {`
+          @keyframes softMove {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-2px, -2px); }
+            50% { transform: translate(2px, -2px); }
+            75% { transform: translate(-2px, 2px); }
+            100% { transform: translate(0, 0); }
+          }
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}
+      </style>
+    </Box>
   );
 };
 
