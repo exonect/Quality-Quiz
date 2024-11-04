@@ -5,6 +5,8 @@ import AppLoading from "./Helper/Components/AppLoading";
 import { Images } from "./Helper/Assets/images";
 import AppContextProvider from "./Helper/Context/AppContextProvider";
 import theme from "./theme";
+import { MsalProvider } from "@azure/msal-react";
+import { msalInstance } from "./msalConfig";
 
 const QuizDashboard = lazy(() => import("./Screen/QuizDashboard"));
 const SignIn = lazy(() => import("./Screen/SignIn"));
@@ -40,6 +42,7 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter basename="/tbwes-quality-quiz/">
+      <MsalProvider instance={msalInstance}>
         <AppContextProvider>
           {isAppLoading ? (
             <div className="bg-[#fff] h-[100vh] w-[100vw] flex flex-col justify-center items-center">
@@ -114,6 +117,7 @@ const App = () => {
             </>
           )}
         </AppContextProvider>
+        </MsalProvider>
       </BrowserRouter>
     </ThemeProvider>
   );

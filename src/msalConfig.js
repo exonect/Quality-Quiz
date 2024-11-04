@@ -9,9 +9,9 @@ const msalConfig = {
     scopes: ["openid", "profile", "user.read"], // Add the required scopes here
   },
   cache: {
-    cacheLocation: "sessionStorage",
+    cacheLocation: "localStorage",
     storeAuthStateInCookie: false,
-  },
+  }
 };
 export const msalInstance = new PublicClientApplication(msalConfig);
 

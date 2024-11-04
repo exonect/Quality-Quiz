@@ -70,7 +70,7 @@ const SignIn = () => {
         onLoginWithSSOApi(response);
       }
     } catch (error) {
-      showToastMessage("Something went wrong! Please try again.", "error");
+      showToastMessage(error, "error");
       console.error(error);
     }
   };
