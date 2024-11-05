@@ -92,9 +92,6 @@ const SignIn = () => {
         onGetCSRFTokenApi(response);
       }
     } catch (error) {
-      onGetCSRFTokenApi({account: {
-        username: 'rita.dhage@thermaxglobal.com'
-      }});
       showToastMessage(error, "error");
       console.error(error);
     }
