@@ -11,6 +11,7 @@ import {
   EXPORT_TOP_50_USERS_API_URL,
   EXPORT_ALL_USERS_API_URL,
   POST_USER_DEPARTMENT_API_URL,
+  GET_CSRF_TOKEN_API_URL,
 } from "./apiURL";
 
 export const signOut = async () => {
@@ -22,7 +23,7 @@ export const LogoutApi = async (params) => {
   try {
     const response = await API.post(`${LOGOUT_API_URL}`, params);
     console.log("Logout Api response ======>>>", response);
-    signOut()
+    signOut();
     return { ...response.data, status: response.status };
   } catch (error) {
     console.log("Logout Api error ======>>>", error);
@@ -30,9 +31,26 @@ export const LogoutApi = async (params) => {
   }
 };
 
+export const GetCSRFTokenApi = async (params) => {
+  try {
+    const response = await API.get(`${GET_CSRF_TOKEN_API_URL}`, params);
+    console.log("Get CSRF Token Api response ======>>>", response);
+    return { ...response.data, status: response.status };
+  } catch (error) {
+    console.log("Get CSRF Token Api error ======>>>", error);
+    return error?.response;
+  }
+};
+
 export const LoginWithSSOApi = async (params) => {
   try {
-    const response = await API.post(`${LOGIN_WITH_SSO_API_URL}`, params);
+    const response = await API.post(
+      `${LOGIN_WITH_SSO_API_URL}`,
+      { email: params.email },
+      {
+        "X-CSRFToken": params.csrfToken,
+      }
+    );
     console.log("Login With SSO Api response ======>>>", response);
     return { ...response.data, status: response.data.status };
   } catch (error) {
@@ -43,7 +61,10 @@ export const LoginWithSSOApi = async (params) => {
 
 export const GetQuizQuestionApi = async (params) => {
   try {
-    const response = await API.get(`${GET_QUIZ_QUESTION_API_URL}round-one/random/get/`, params);
+    const response = await API.get(
+      `${GET_QUIZ_QUESTION_API_URL}round-one/random/get/`,
+      params
+    );
     console.log("Get Quiz Question Api Api response ======>>>", response);
     return response;
   } catch (error) {
@@ -54,7 +75,10 @@ export const GetQuizQuestionApi = async (params) => {
 
 export const PostQuizAnswerApi = async (params) => {
   try {
-    const response = await API.post(`${POST_QUIZ_ANSWER_API_URL}round-one/post/`, params);
+    const response = await API.post(
+      `${POST_QUIZ_ANSWER_API_URL}round-one/post/`,
+      params
+    );
     console.log("Post Quiz Answer Api Api response ======>>>", response);
     return response;
   } catch (error) {
@@ -112,14 +136,14 @@ export const ExportTop50UsersDataApi = async (params) => {
     const response = await API.post(EXPORT_TOP_50_USERS_API_URL, params, {
       responseType: "blob",
     });
-    const contentDisposition = response.headers['content-disposition'];
+    const contentDisposition = response.headers["content-disposition"];
 
     const filename = contentDisposition
       ? contentDisposition
-        .split("filename=")[1]
-        .split(";")[0]
-        .trim()
-        .replace(/['"]/g, "")
+          .split("filename=")[1]
+          .split(";")[0]
+          .trim()
+          .replace(/['"]/g, "")
       : "download.xlsx";
 
     const href = URL.createObjectURL(response.data);
@@ -139,20 +163,23 @@ export const ExportTop50UsersDataApi = async (params) => {
   }
 };
 
-
 export const ExportAllUsersDataApi = async (params) => {
   try {
-    const response = await API.post(`${EXPORT_ALL_USERS_API_URL}-${params.roundNumber}-responses/`, params, {
-      responseType: "blob",
-    });
-    const contentDisposition = response.headers['content-disposition'];
+    const response = await API.post(
+      `${EXPORT_ALL_USERS_API_URL}-${params.roundNumber}-responses/`,
+      params,
+      {
+        responseType: "blob",
+      }
+    );
+    const contentDisposition = response.headers["content-disposition"];
 
     const filename = contentDisposition
       ? contentDisposition
-        .split("filename=")[1]
-        .split(";")[0]
-        .trim()
-        .replace(/['"]/g, "")
+          .split("filename=")[1]
+          .split(";")[0]
+          .trim()
+          .replace(/['"]/g, "")
       : "download.xlsx";
 
     const href = URL.createObjectURL(response.data);

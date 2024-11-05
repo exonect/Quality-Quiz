@@ -15,3 +15,4 @@ export const EXPORT_TOP_50_USERS_API_URL = '/export-top-50-users/';
 export const EXPORT_ALL_USERS_API_URL = '/export-round';
 
 export const POST_USER_DEPARTMENT_API_URL = '/user-department/post/';
+export const GET_CSRF_TOKEN_API_URL = '/get-csrf-token/';

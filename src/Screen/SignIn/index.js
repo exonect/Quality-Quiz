@@ -3,7 +3,7 @@ import { Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LoginWithSSOApi } from "../../Helper/Api";
+import { GetCSRFTokenApi, LoginWithSSOApi } from "../../Helper/Api";
 import { Images } from "../../Helper/Assets/images";
 import Toaster from "../../Helper/Components/Toaster";
 import { AppContext } from "../../Helper/Context/AppContextProvider";
@@ -20,6 +20,7 @@ const ColorButton = styled(Button)(({ theme }) => ({
 const SignIn = () => {
   const { apiStore, setApiStore } = useContext(AppContext);
   const [openToaster, setOpenToaster] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [toasterMessage, setToasterMessage] = useState("");
   const [toasterType, setToasterType] = useState("");
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ const SignIn = () => {
   const onLoginWithSSOApi = async (response) => {
     const ssoAPIRes = await LoginWithSSOApi({
       email: response.account.username,
+      'csrfToken': response.csrfToken
     });
     if (ssoAPIRes.status === 200) {
       localStorage.setItem("isSidebarMove", true);
@@ -61,13 +63,32 @@ const SignIn = () => {
     }
   };
 
+  const onGetCSRFTokenApi = async (SSORes) => {
+    setIsLoading(true);
+    const getCSRFTokenData = await GetCSRFTokenApi();
+    if (
+      getCSRFTokenData.status >= 200 &&
+      getCSRFTokenData.status <= 300
+    ) {
+      onLoginWithSSOApi({...SSORes, "csrfToken": getCSRFTokenData.csrfToken});
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+      if (getCSRFTokenData?.data?.error) {
+        showToastMessage(getCSRFTokenData.data.error, "error");
+      } else {
+        showToastMessage("Something went wrong, please try again", "error");
+      }
+    }
+  };
+
   const handleLoginButtonSSO = async () => {
     try {
       const response = await msalInstance.loginPopup({
         scopes: ["openid", "profile", "user.read"],
       });
       if (response && response.account) {
-        onLoginWithSSOApi(response);
+        onGetCSRFTokenApi(response)
       }
     } catch (error) {
       showToastMessage(error, "error");
@@ -188,7 +209,10 @@ const SignIn = () => {
                 mb={1}
                 className="py-2 justify-center items-center text-center"
               >
-                <Typography className="!text-[18px] !mb-[8px]" fontWeight="medium">
+                <Typography
+                  className="!text-[18px] !mb-[8px]"
+                  fontWeight="medium"
+                >
                   Sign in
                 </Typography>
                 <ColorButton
