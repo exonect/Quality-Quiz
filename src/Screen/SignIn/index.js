@@ -27,8 +27,8 @@ const SignIn = () => {
 
   const onLoginWithSSOApi = async (response) => {
     const ssoAPIRes = await LoginWithSSOApi({
-      email: response.account.username,
-      'csrfToken': response.csrfToken
+      params: { email: response.account.username },
+      csrfToken: response.csrfToken,
     });
     if (ssoAPIRes.status === 200) {
       localStorage.setItem("isSidebarMove", true);
@@ -66,11 +66,8 @@ const SignIn = () => {
   const onGetCSRFTokenApi = async (SSORes) => {
     setIsLoading(true);
     const getCSRFTokenData = await GetCSRFTokenApi();
-    if (
-      getCSRFTokenData.status >= 200 &&
-      getCSRFTokenData.status <= 300
-    ) {
-      onLoginWithSSOApi({...SSORes, "csrfToken": getCSRFTokenData.csrfToken});
+    if (getCSRFTokenData.status >= 200 && getCSRFTokenData.status <= 300) {
+      onLoginWithSSOApi({ ...SSORes, csrfToken: getCSRFTokenData.csrfToken });
       setIsLoading(false);
     } else {
       setIsLoading(false);
@@ -88,7 +85,7 @@ const SignIn = () => {
         scopes: ["openid", "profile", "user.read"],
       });
       if (response && response.account) {
-        onGetCSRFTokenApi(response)
+        onGetCSRFTokenApi(response);
       }
     } catch (error) {
       showToastMessage(error, "error");

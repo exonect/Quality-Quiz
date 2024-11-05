@@ -42,15 +42,13 @@ export const GetCSRFTokenApi = async (params) => {
   }
 };
 
-export const LoginWithSSOApi = async (params) => {
+export const LoginWithSSOApi = async ({ params, csrfToken }) => {
   try {
-    const response = await API.post(
-      `${LOGIN_WITH_SSO_API_URL}`,
-      { email: params.email },
-      {
-        "X-CSRFToken": params.csrfToken,
-      }
-    );
+    const response = await API.post(`${LOGIN_WITH_SSO_API_URL}`, params, {
+      headers: {
+        "X-CSRFToken": csrfToken,
+      },
+    });
     console.log("Login With SSO Api response ======>>>", response);
     return { ...response.data, status: response.data.status };
   } catch (error) {
