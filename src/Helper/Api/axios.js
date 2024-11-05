@@ -7,10 +7,8 @@ const API = axios.create({
 });
 
 API.interceptors.request.use(async (config) => {
-  const csrfToken = await JSON.parse(localStorage.getItem("csrfToken"));
   const accessToken = await JSON.parse(localStorage.getItem("accessToken"));
-  if (accessToken || csrfToken) {
-    config.headers['X-CSRFToken'] = csrfToken && `${csrfToken}`;
+  if (accessToken) {
     config.headers.Authorization = accessToken && `Bearer ${accessToken}`;
   }
   return config;
