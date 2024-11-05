@@ -67,6 +67,10 @@ const SignIn = () => {
     setIsLoading(true);
     const getCSRFTokenData = await GetCSRFTokenApi();
     if (getCSRFTokenData.status >= 200 && getCSRFTokenData.status <= 300) {
+      localStorage.setItem(
+        "csrfToken",
+        JSON.stringify(getCSRFTokenData.csrfToken)
+      );
       onLoginWithSSOApi({ ...SSORes, csrfToken: getCSRFTokenData.csrfToken });
       setIsLoading(false);
     } else {
