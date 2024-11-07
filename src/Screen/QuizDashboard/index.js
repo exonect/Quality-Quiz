@@ -21,16 +21,16 @@ import {
   MenuItem,
 } from "@mui/material";
 import { Info, Quiz, Timer, CheckCircle } from "@mui/icons-material";
+import LogoutIcon from "@mui/icons-material/Logout";
 import Toaster from "../../Helper/Components/Toaster";
 import {
   GetDepartmentsApi,
   GetQuizQuestionApi,
   PostQuizAnswerApi,
   PostUserDepartmentApi,
+  signOut,
 } from "../../Helper/Api";
 import AppLoading from "../../Helper/Components/AppLoading";
-
-const departments = ["Department 1", "Department 2", "Department 3"];
 
 const QuizDashboard = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -81,7 +81,7 @@ const QuizDashboard = () => {
     setOpenToaster(true);
   };
 
-  const onPostQuizAnswer = async () => {
+  const onPostQuizAnswer = async (islogout) => {
     const EndTime = new Date();
     setQuizEndTime(EndTime.getTime());
     setIsLoading(true);
@@ -94,8 +94,13 @@ const QuizDashboard = () => {
     });
     if (postQuizAnswerData.status >= 200 && postQuizAnswerData.status <= 300) {
       setIsLoading(false);
-      showToastMessage("Quiz Completed!", "success");
       setOpenThankYouModal(true); // Open thank-you modal
+      if (!islogout) {
+        showToastMessage("Quiz Completed!", "success");
+      } else { 
+        showToastMessage("User Logout successfully!", "success");
+        signOut()
+      }
     } else {
       resetQuiz();
       showToastMessage("Something went wrong, please try again", "error");
@@ -113,7 +118,7 @@ const QuizDashboard = () => {
       showToastMessage("Time is up! Quiz Completed!", "error");
       const EndTime = new Date();
       setQuizEndTime(EndTime.getTime());
-      onPostQuizAnswer();
+      onPostQuizAnswer(false);
     }
   }, [timerActive, timeLeft]);
 
@@ -133,7 +138,7 @@ const QuizDashboard = () => {
         setSelectedAnswer("");
         setSelectedAnswerQId("");
       } else {
-        onPostQuizAnswer();
+        onPostQuizAnswer(false);
       }
     }
   };
@@ -244,6 +249,7 @@ const QuizDashboard = () => {
           <AppLoading />
         </div>
       )}
+
       {/* Background Animated Icons */}
       <Box
         sx={{
@@ -308,16 +314,37 @@ const QuizDashboard = () => {
           />
         </Box>
       </Box>
-
+      {isQuizStarted && (
+        <div className="absolute top-[10px] right-[10px] z-10">
+          <Button
+          onClick={() => {
+            onPostQuizAnswer(true)
+          }}
+            sx={{
+              color: "#fff",
+              borderColor: "#fff",
+              bgcolor: "rgba(0, 0, 0, 0.1)",
+              "&:hover": { bgcolor: "rgba(0, 0, 0, 0.1)" },
+              width: { xs: "100%" },
+            }}
+            variant="outlined"
+            startIcon={<LogoutIcon />}
+          >
+            Logout
+          </Button>
+        </div>
+      )}
       <Paper
         elevation={3}
         sx={{
-          width: "80%",
-          p: 6,
+          maxHeight: "80vh",
+          overflow: "auto",
+          width: "100%",
+          maxWidth: 800,
+          p: 4,
           borderRadius: "16px",
           backgroundColor: "#ffffff",
           boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-
           bgcolor: "rgba(255, 255, 255, 0.9)",
           backdropFilter: "blur(10px)",
           zIndex: 1,
@@ -334,6 +361,8 @@ const QuizDashboard = () => {
                 value={selectedDepartment}
                 onChange={handleDepartmentChange}
                 displayEmpty
+                fullWidth
+                sx={{ fontSize: { xs: "14px", sm: "16px" } }}
               >
                 <MenuItem value="" disabled>
                   Select Department
@@ -350,7 +379,12 @@ const QuizDashboard = () => {
                 control={
                   <Checkbox
                     checked={acceptedTerms}
-                    onChange={() => setAcceptedTerms(!acceptedTerms)}
+                    onChange={() => {
+                      setAcceptedTerms(!acceptedTerms);
+                      if (!acceptedTerms) {
+                        handleOpenDialog();
+                      }
+                    }}
                     color="primary"
                   />
                 }
@@ -402,6 +436,7 @@ const QuizDashboard = () => {
                   bgcolor: "#3f51b5",
                   "&:hover": { bgcolor: "#304ffe" },
                   transition: "background-color 0.3s",
+                  fontSize: { xs: "14px", sm: "16px" },
                 }}
               >
                 Start Quiz
@@ -410,21 +445,28 @@ const QuizDashboard = () => {
           </Box>
         ) : (
           <Box>
-            <Typography
-              variant="h6"
-              sx={{
-                textAlign: "center",
-                mb: 2,
-                fontWeight: "bold",
-                color: getTimerColor(),
-              }}
+            <div className="absolute top-[0px] right-[0px] bg-[#000] px-[15px] py-[5px] rounded-tr-[16px] rounded-bl-[16px]">
+              <Typography
+                variant="h6"
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  color: getTimerColor(),
+                  fontSize: { xs: "16px", sm: "18px" },
+                }}
+              >
+                Time Left:{" "}
+                <span style={{ color: getTimerColor() }}>
+                  {formatTime(timeLeft)}
+                </span>
+              </Typography>
+            </div>
+            <div className="mt-[35px]"> </div>
+            <Stepper
+              activeStep={activeStep}
+              alternativeLabel
+              className="overflow-auto"
             >
-              Time Left:{" "}
-              <span style={{ color: getTimerColor() }}>
-                {formatTime(timeLeft)}
-              </span>
-            </Typography>
-            <Stepper activeStep={activeStep} alternativeLabel>
               {quizQuestions.map((_, index) => (
                 <Step key={index}>
                   <StepLabel>{`Question ${index + 1}`}</StepLabel>
@@ -483,7 +525,7 @@ const QuizDashboard = () => {
                     sx={{
                       bgcolor: "#4caf50",
                       "&:hover": { bgcolor: "#388e3c" },
-                      width: "40%",
+                      width: { xs: "100%", sm: "40%" },
                     }}
                   >
                     {activeStep < quizQuestions.length - 1 ? "Next" : "Submit"}

@@ -17,6 +17,7 @@ import {
 export const signOut = async () => {
   localStorage.clear();
   window.location.reload();
+  window.location = '/tbwes-quality-quiz/'
 };
 
 export const LogoutApi = async (params) => {
