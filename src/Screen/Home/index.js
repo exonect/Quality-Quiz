@@ -223,207 +223,211 @@ const QuizDashboard = () => {
         </Toolbar>
       </AppBar>
 
-      {/* First Row: Participation Overview and Chart */}
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Paper
-            elevation={6}
-            className="p-6 mb-4 rounded-lg shadow-lg bg-white"
-          >
-            <div className="flex row justify-between">
-              <Grid item xs={3} className="flex !flex-col justify-between">
-                {/* Overview Statistics */}
-                <Grid container spacing={1} className="mt-4">
-                  <Grid item xs={12}>
-                    <Paper className="bg-gradient-to-r from-blue-500 to-blue-700 p-[8px] rounded-lg text-center shadow-md">
-                      <Typography variant="h6">Total Participants</Typography>
-                      <Typography variant="h4">
-                        {top50UsersList.length}
-                      </Typography>
-                    </Paper>
+      <div className="overflow-x-auto flex-col flex h-[calc(100vh-95px)]">
+        {/* First Row: Participation Overview and Chart */}
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Paper
+              elevation={6}
+              className="p-6 mb-4 rounded-lg shadow-lg bg-white"
+            >
+              <div className="flex row justify-between flex-wrap">
+                <Grid item xs={3} className="flex !flex-col justify-between">
+                  {/* Overview Statistics */}
+                  <Grid container spacing={1} className="mt-4">
+                    <Grid item xs={12}>
+                      <Paper className="bg-gradient-to-r from-blue-500 to-blue-700 p-[8px] rounded-lg text-center shadow-md">
+                        <Typography variant="h6">Total Participants</Typography>
+                        <Typography variant="h4">
+                          {top50UsersList.length}
+                        </Typography>
+                      </Paper>
+                    </Grid>
+                  </Grid>
+                  <Grid container spacing={1} className="mt-2">
+                    <Grid item xs={12}>
+                      <Paper className="bg-gradient-to-r from-green-500 to-green-700 p-[8px] rounded-lg text-center shadow-md">
+                        <Typography variant="h6">Max Score</Typography>
+                        <Typography variant="h4">
+                          {Math.max(...top50UsersList.map((p) => p.score))}
+                        </Typography>
+                      </Paper>
+                    </Grid>
+                  </Grid>
+                  <Grid container spacing={1} className="mt-2">
+                    <Grid item xs={12}>
+                      <Paper className="bg-gradient-to-r from-red-500 to-red-700 p-[8px] rounded-lg text-center shadow-md">
+                        <Typography variant="h6">Min Score</Typography>
+                        <Typography variant="h4">
+                          {Math.min(...top50UsersList.map((p) => p.score))}
+                        </Typography>
+                      </Paper>
+                    </Grid>
                   </Grid>
                 </Grid>
-                <Grid container spacing={1} className="mt-2">
-                  <Grid item xs={12}>
-                    <Paper className="bg-gradient-to-r from-green-500 to-green-700 p-[8px] rounded-lg text-center shadow-md">
-                      <Typography variant="h6">Max Score</Typography>
-                      <Typography variant="h4">
-                        {Math.max(...top50UsersList.map((p) => p.score))}
-                      </Typography>
-                    </Paper>
-                  </Grid>
-                </Grid>
-                <Grid container spacing={1} className="mt-2">
-                  <Grid item xs={12}>
-                    <Paper className="bg-gradient-to-r from-red-500 to-red-700 p-[8px] rounded-lg text-center shadow-md">
-                      <Typography variant="h6">Min Score</Typography>
-                      <Typography variant="h4">
-                        {Math.min(...top50UsersList.map((p) => p.score))}
-                      </Typography>
-                    </Paper>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={8.8}>
-                <Paper
-                  elevation={3}
-                  className="p-4 rounded-lg shadow-lg bg-white"
-                >
-                  <Typography
-                    variant="h6"
-                    className="font-semibold text-gray-800"
+                <Grid item xs={8.8}>
+                  <Paper
+                    elevation={3}
+                    className="p-4 rounded-lg shadow-lg bg-white"
                   >
-                    Score Distribution by Department
-                  </Typography>
-                  <SimpleBarChart data={getChartData()} />
-                </Paper>
-              </Grid>
-            </div>
-          </Paper>
+                    <Typography
+                      variant="h6"
+                      className="font-semibold text-gray-800"
+                    >
+                      Score Distribution by Department
+                    </Typography>
+                    <SimpleBarChart data={getChartData()} />
+                  </Paper>
+                </Grid>
+              </div>
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
 
-      {/* Second Row: Tabs, Filter, and Export Buttons */}
-      <Box
-        sx={{ width: "100%", mb: 2 }}
-        className="flex justify-between items-center mt-4"
-      >
-        <Tabs
-          value={tabValue}
-          onChange={handleTabChange}
-          aria-label="user ranking tabs"
-          textColor="inherit"
-          indicatorColor="secondary"
-          centered
+        {/* Second Row: Tabs, Filter, and Export Buttons */}
+        <Box
+          sx={{ width: "100%", mb: 2 }}
+          className="flex justify-between items-center flex-wrap"
         >
-          <Tab label="Top 50 Users" />
-          {/* <Tab label="Top 15 Users" />
-          <Tab label="Top 3 Users" /> */}
-        </Tabs>
-        <div className="flex items-center">
-          <div className="mr-2">
-            <FormControl
-              variant="outlined"
-              style={{ minWidth: 150 }}
-              size="small"
-            >
-              <InputLabel
-                sx={{
-                  color: "#fff",
-                  "&.Mui-focused": {
-                    color: "#fff",
-                  },
-                }}
-                id="department-select-label"
-              >
-                Department
-              </InputLabel>
-              <Select
-                sx={{
-                  color: "#fff", // Custom color for the text
-                  ".MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#fff", // Custom color for the border
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#fff", // Custom color when focused
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#fff", // Custom color on hover
-                  },
-                }}
-                className="text-[#fff]"
-                labelId="department-select-label"
-                value={selectedDepartment}
-                onChange={(e) => setSelectedDepartment(e.target.value)}
-                label="Department"
-              >
-                <MenuItem value="">All</MenuItem>
-                {departments.map((dept) => (
-                  <MenuItem key={dept} value={dept}>
-                    {dept}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              exportAllUsers();
-            }}
-            className="ml-4"
+          <Tabs
+            className="mt-4"
+            value={tabValue}
+            onChange={handleTabChange}
+            aria-label="user ranking tabs"
+            textColor="inherit"
+            indicatorColor="secondary"
+            centered
           >
-            Export All Data
-          </Button>
-          <div className="ml-2">
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => {
-                exportTop50Users();
-              }}
-            >
-              {getDownloadButtonLabel()}
-            </Button>
-          </div>
-        </div>
-      </Box>
-
-      {/* Third Row: Participants Table */}
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Paper elevation={3} className="p-4 rounded-lg shadow-lg bg-white">
-            <Typography variant="h6" className="font-semibold text-gray-800">
-              Participants List
-            </Typography>
-            <TableContainer style={{ maxHeight: 400 }}>
-              <Table stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Email</TableCell>
-                    <TableCell>Department</TableCell>
-                    <TableCell>
-                      <Box className="flex items-center">
-                        Score
-                        {isAscending ? (
-                          <ArrowDownwardIcon
-                            onClick={() => setIsAscending(false)}
-                            style={{ cursor: "pointer", marginLeft: 4 }}
-                          />
-                        ) : (
-                          <ArrowUpwardIcon
-                            onClick={() => setIsAscending(true)}
-                            style={{ cursor: "pointer", marginLeft: 4 }}
-                          />
-                        )}
-                      </Box>
-                    </TableCell>
-                    <TableCell>Duration</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {getDisplayedParticipants().map((participant) => (
-                    <TableRow key={participant.user}>
-                      <TableCell>{participant.user_full_name}</TableCell>
-                      <TableCell>{participant.user_email}</TableCell>
-                      <TableCell>{participant.user_department}</TableCell>
-                      <TableCell>{participant.score}</TableCell>
-                      <TableCell>
-                        {getDuration(
-                          participant.formatted_start_time,
-                          participant.formatted_end_time
-                        )}
-                      </TableCell>
-                    </TableRow>
+            <Tab label="Top 50 Users" />
+            {/* <Tab label="Top 15 Users" />
+                <Tab label="Top 3 Users" /> */}
+          </Tabs>
+          <div className="flex items-center flex-wrap">
+            <div className="md:mr-2 mt-4">
+              <FormControl
+                variant="outlined"
+                style={{ minWidth: 150 }}
+                size="small"
+              >
+                <InputLabel
+                  sx={{
+                    color: "#fff",
+                    "&.Mui-focused": {
+                      color: "#fff",
+                    },
+                  }}
+                  id="department-select-label"
+                >
+                  Department
+                </InputLabel>
+                <Select
+                  sx={{
+                    color: "#fff", // Custom color for the text
+                    ".MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#fff", // Custom color for the border
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#fff", // Custom color when focused
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#fff", // Custom color on hover
+                    },
+                  }}
+                  className="text-[#fff]"
+                  labelId="department-select-label"
+                  value={selectedDepartment}
+                  onChange={(e) => setSelectedDepartment(e.target.value)}
+                  label="Department"
+                >
+                  <MenuItem value="">All</MenuItem>
+                  {departments.map((dept) => (
+                    <MenuItem key={dept} value={dept}>
+                      {dept}
+                    </MenuItem>
                   ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
+                </Select>
+              </FormControl>
+            </div>
+            <div className="mt-4">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  exportAllUsers();
+                }}
+              >
+                Export All Data
+              </Button>
+            </div>
+            <div className="md:ml-2 mt-4">
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => {
+                  exportTop50Users();
+                }}
+              >
+                {getDownloadButtonLabel()}
+              </Button>
+            </div>
+          </div>
+        </Box>
+
+        {/* Third Row: Participants Table */}
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Paper elevation={3} className="p-4 rounded-lg shadow-lg bg-white">
+              <Typography variant="h6" className="font-semibold text-gray-800">
+                Participants List
+              </Typography>
+              <TableContainer>
+                <Table stickyHeader>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Name</TableCell>
+                      <TableCell>Email</TableCell>
+                      <TableCell>Department</TableCell>
+                      <TableCell>
+                        <Box className="flex items-center">
+                          Score
+                          {isAscending ? (
+                            <ArrowDownwardIcon
+                              onClick={() => setIsAscending(false)}
+                              style={{ cursor: "pointer", marginLeft: 4 }}
+                            />
+                          ) : (
+                            <ArrowUpwardIcon
+                              onClick={() => setIsAscending(true)}
+                              style={{ cursor: "pointer", marginLeft: 4 }}
+                            />
+                          )}
+                        </Box>
+                      </TableCell>
+                      <TableCell>Duration</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {getDisplayedParticipants().map((participant) => (
+                      <TableRow key={participant.user}>
+                        <TableCell>{participant.user_full_name}</TableCell>
+                        <TableCell>{participant.user_email}</TableCell>
+                        <TableCell>{participant.user_department}</TableCell>
+                        <TableCell>{participant.score}</TableCell>
+                        <TableCell>
+                          {getDuration(
+                            participant.formatted_start_time,
+                            participant.formatted_end_time
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
+      </div>
 
       <Toaster
         toasterMessage={toasterMessage}
