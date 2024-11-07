@@ -20,7 +20,7 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-
+import LogoutIcon from "@mui/icons-material/Logout";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
@@ -29,6 +29,7 @@ import {
   ExportAllUsersDataApi,
   ExportTop50UsersDataApi,
   GetTop50UsersApi,
+  signOut,
 } from "../../Helper/Api";
 import Toaster from "../../Helper/Components/Toaster";
 import AppLoading from "../../Helper/Components/AppLoading";
@@ -218,8 +219,24 @@ const QuizDashboard = () => {
         </div>
       )}
       <AppBar position="static" elevation={0} className="bg-transparent">
-        <Toolbar>
+        <Toolbar className="justify-between flex-wrap">
           <Typography variant="h4">Quiz Dashboard</Typography>
+          <Button
+            onClick={() => {
+              signOut();
+            }}
+            sx={{
+              color: "#fff",
+              borderColor: "#fff",
+              bgcolor: "rgba(0, 0, 0, 0.1)",
+              "&:hover": { bgcolor: "rgba(0, 0, 0, 0.1)" },
+              width: { xs: "120px" },
+            }}
+            variant="outlined"
+            startIcon={<LogoutIcon />}
+          >
+            Logout
+          </Button>
         </Toolbar>
       </AppBar>
 
