@@ -196,7 +196,7 @@ const SignIn = () => {
                 loading="lazy"
                 src={Images.Logo}
                 alt="thermax_logo"
-                className="w-[100px] h-[auto]"
+                className="w-[120px] h-[auto]"
               />
             </div>
             <Box className="py-2 justify-center items-center text-center">
@@ -210,18 +210,12 @@ const SignIn = () => {
                 mb={1}
                 className="py-2 justify-center items-center text-center"
               >
-                <Typography
-                  className="!text-[18px] !mb-[8px]"
-                  fontWeight="medium"
-                >
-                  Sign in
-                </Typography>
                 <ColorButton
                   className="bg-[#0e1322] text-white px-2 w-[100%]"
                   fullWidth
                   onClick={() => handleLoginButtonSSO()}
                 >
-                  Login With SSO
+                  Login
                 </ColorButton>
               </Box>
             </Box>

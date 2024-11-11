@@ -97,9 +97,9 @@ const QuizDashboard = () => {
       setOpenThankYouModal(true); // Open thank-you modal
       if (!islogout) {
         showToastMessage("Quiz Completed!", "success");
-      } else { 
+      } else {
         showToastMessage("User Logout successfully!", "success");
-        signOut()
+        signOut();
       }
     } else {
       resetQuiz();
@@ -317,9 +317,9 @@ const QuizDashboard = () => {
       {isQuizStarted && (
         <div className="absolute top-[10px] right-[10px] z-10">
           <Button
-          onClick={() => {
-            onPostQuizAnswer(true)
-          }}
+            onClick={() => {
+              onPostQuizAnswer(true);
+            }}
             sx={{
               color: "#fff",
               borderColor: "#fff",
@@ -401,20 +401,13 @@ const QuizDashboard = () => {
                 <DialogTitle>Quiz Rules and Eligibility</DialogTitle>
                 <DialogContent>
                   <Typography>
-                    <strong>Eligibility:</strong> Must belong to the selected
-                    department.
-                    <br />
-                    <strong>Format:</strong> 10 multiple-choice questions with
-                    four options each.
-                    <br />
-                    <strong>Time Limit:</strong> 10 minutes to complete the
-                    quiz.
-                    <br />
-                    <strong>Auto Submission:</strong> Quiz submits automatically
-                    when time is up or if the connection is lost.
-                    <br />
-                    <strong>One Answer Only:</strong> No going back once "Next"
-                    is clicked.
+                    <strong>1.</strong>Random 10 questions (MCQ) shall be appeared from question bank provided. <br />
+                    <strong>2.</strong>Only one entry is permitted for each participant.  <br />
+                    <strong>3.</strong>Maximum 10 Minutes time will be provided for completing the Quiz.  <br />
+                    <strong>4.</strong>All Questions are compulsory.  <br />
+                    <strong>5.</strong>After 10 Minutes time answers will be automatically submitted for attended questions.  <br />
+                    <strong>6.</strong>No Going back allowed once “Next” button clicked.  <br />
+                    <strong>7.</strong>All the answers will be accessed by Jury members, and they will declare the list of successful Candidates based on fastest and accurate answers.<br />
                   </Typography>
                 </DialogContent>
                 <DialogActions>
