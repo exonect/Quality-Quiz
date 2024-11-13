@@ -444,6 +444,7 @@ const QuizDashboard = () => {
                           )}
                         </Box>
                       </TableCell>
+                      <TableCell>Duration</TableCell>
                       <TableCell>Start date</TableCell>
                       <TableCell>End date</TableCell>
                     </TableRow>
@@ -455,14 +456,14 @@ const QuizDashboard = () => {
                         <TableCell>{participant.user_email}</TableCell>
                         <TableCell>{participant.user_department}</TableCell>
                         <TableCell>{participant.score}</TableCell>
-                        <TableCell>{moment(participant.formatted_start_time).format('DD-MMM-YY T HH:mm:ss')}</TableCell>
-                        <TableCell>{moment(participant.formatted_end_time).format('DD-MMM-YY T HH:mm:ss')}</TableCell>
-                        {/* <TableCell>
+                        <TableCell>
                           {getDuration(
                             participant.formatted_start_time,
                             participant.formatted_end_time
                           )}
-                        </TableCell> */}
+                        </TableCell>
+                        <TableCell>{moment(participant.formatted_start_time).format('DD-MMM-YY T HH:mm:ss')}</TableCell>
+                        <TableCell>{moment(participant.formatted_end_time).format('DD-MMM-YY T HH:mm:ss')}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
