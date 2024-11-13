@@ -28,6 +28,7 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import {
   ExportAllUsersDataApi,
   ExportTop50UsersDataApi,
+  GetJuryAnalysisApi,
   GetTop50UsersApi,
   signOut,
 } from "../../Helper/Api";
@@ -43,6 +44,7 @@ const QuizDashboard = () => {
   const [toasterMessage, setToasterMessage] = useState("");
   const [toasterType, setToasterType] = useState("");
   const [top50UsersList, setTop50UsersList] = useState([]);
+  const [juryAnalysisList, setJuryAnalysisList] = useState(null);
   const [selectedDepartment, setSelectedDepartment] = useState(""); // State for selected department
   const [departments, setDepartments] = useState([]); // State for department list
 
@@ -73,8 +75,19 @@ const QuizDashboard = () => {
     }
   };
 
+  const GetJuryAnalysis = async () => {
+    const juryAnalysisData = await GetJuryAnalysisApi();
+    if (juryAnalysisData.status >= 200 && juryAnalysisData.status <= 300) {
+      setJuryAnalysisList(juryAnalysisData.data);
+      GetTop50Users();
+    } else {
+      setIsLoading(false);
+      showToastMessage("Something went wrong, please try again", "error");
+    }
+  };
+
   useEffect(() => {
-    GetTop50Users();
+    GetJuryAnalysis();
   }, []);
 
   const handleTabChange = (event, newValue) => {
@@ -251,32 +264,42 @@ const QuizDashboard = () => {
               <div className="flex row justify-between flex-wrap">
                 <Grid item xs={3} className="flex !flex-col justify-between">
                   {/* Overview Statistics */}
-                  <Grid container spacing={1} className="mt-4">
+                  <Grid container spacing={1} className="mt-1">
                     <Grid item xs={12}>
                       <Paper className="bg-gradient-to-r from-blue-500 to-blue-700 p-[8px] rounded-lg text-center shadow-md">
                         <Typography variant="h6">Total Participants</Typography>
                         <Typography variant="h4">
-                          {top50UsersList.length}
+                          {juryAnalysisList?.round_one?.total_participants || 0}
                         </Typography>
                       </Paper>
                     </Grid>
                   </Grid>
-                  <Grid container spacing={1} className="mt-2">
+                  <Grid container spacing={1} className="mt-1">
                     <Grid item xs={12}>
                       <Paper className="bg-gradient-to-r from-green-500 to-green-700 p-[8px] rounded-lg text-center shadow-md">
-                        <Typography variant="h6">Max Score</Typography>
+                        <Typography variant="h6">Full Score</Typography>
                         <Typography variant="h4">
-                          {Math.max(...top50UsersList.map((p) => p.score))}
+                          {juryAnalysisList?.round_one?.users_with_full_marks || 0}
                         </Typography>
                       </Paper>
                     </Grid>
                   </Grid>
-                  <Grid container spacing={1} className="mt-2">
+                  <Grid container spacing={1} className="mt-1">
                     <Grid item xs={12}>
                       <Paper className="bg-gradient-to-r from-red-500 to-red-700 p-[8px] rounded-lg text-center shadow-md">
-                        <Typography variant="h6">Min Score</Typography>
+                        <Typography variant="h6">Score btw 50 to 90</Typography>
                         <Typography variant="h4">
-                          {Math.min(...top50UsersList.map((p) => p.score))}
+                          {juryAnalysisList?.round_one?.users_with_score_between_50_and_90 || 0}
+                        </Typography>
+                      </Paper>
+                    </Grid>
+                  </Grid>
+                  <Grid container spacing={1} className="mt-1">
+                    <Grid item xs={12}>
+                      <Paper className="bg-gradient-to-r from-red-500 to-red-700 p-[8px] rounded-lg text-center shadow-md">
+                        <Typography variant="h6">Score bellow 50</Typography>
+                        <Typography variant="h4">
+                          {juryAnalysisList?.round_one?.users_with_score_below_50 || 0}
                         </Typography>
                       </Paper>
                     </Grid>
