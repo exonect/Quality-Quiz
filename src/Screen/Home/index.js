@@ -35,6 +35,7 @@ import {
 import Toaster from "../../Helper/Components/Toaster";
 import AppLoading from "../../Helper/Components/AppLoading";
 import SimpleBarChart from "../../Helper/Components/SimpleBarChart";
+import moment from "moment";
 
 const QuizDashboard = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -443,7 +444,8 @@ const QuizDashboard = () => {
                           )}
                         </Box>
                       </TableCell>
-                      <TableCell>Duration</TableCell>
+                      <TableCell>Start date</TableCell>
+                      <TableCell>End date</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -453,12 +455,14 @@ const QuizDashboard = () => {
                         <TableCell>{participant.user_email}</TableCell>
                         <TableCell>{participant.user_department}</TableCell>
                         <TableCell>{participant.score}</TableCell>
-                        <TableCell>
+                        <TableCell>{moment(participant.formatted_start_time).format('DD-MMM-YY T HH:mm:ss')}</TableCell>
+                        <TableCell>{moment(participant.formatted_end_time).format('DD-MMM-YY T HH:mm:ss')}</TableCell>
+                        {/* <TableCell>
                           {getDuration(
                             participant.formatted_start_time,
                             participant.formatted_end_time
                           )}
-                        </TableCell>
+                        </TableCell> */}
                       </TableRow>
                     ))}
                   </TableBody>
