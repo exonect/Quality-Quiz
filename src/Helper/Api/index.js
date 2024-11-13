@@ -12,6 +12,8 @@ import {
   EXPORT_ALL_USERS_API_URL,
   POST_USER_DEPARTMENT_API_URL,
   GET_CSRF_TOKEN_API_URL,
+  GET_DEPARTMENT_USER_COUNT_API_URL,
+  GET_JURY_ANALYSIS_API_URL,
 } from "./apiURL";
 
 export const signOut = async () => {
@@ -166,7 +168,7 @@ export const ExportAllUsersDataApi = async (params) => {
   try {
     const response = await API.post(
       `${EXPORT_ALL_USERS_API_URL}-${params.roundNumber}-responses/`,
-      params,
+      {},
       {
         responseType: "blob",
       }
@@ -205,6 +207,28 @@ export const PostUserDepartmentApi = async (params) => {
     return response;
   } catch (error) {
     console.log("Post User Department Api Api error ======>>>", error);
+    return error?.response;
+  }
+};
+
+export const GetDepartmentUserCountApi = async (params) => {
+  try {
+    const response = await API.get(`${GET_DEPARTMENT_USER_COUNT_API_URL}`, params);
+    console.log("Get Department User Count Api Api response ======>>>", response);
+    return response;
+  } catch (error) {
+    console.log("Get Department User Count Api Api error ======>>>", error);
+    return error?.response;
+  }
+};
+
+export const GetJuryAnalysisApi = async (params) => {
+  try {
+    const response = await API.get(`${GET_JURY_ANALYSIS_API_URL}`, params);
+    console.log("Get Jury Analysis Api Api response ======>>>", response);
+    return response;
+  } catch (error) {
+    console.log("Get Jury Analysis Api Api error ======>>>", error);
     return error?.response;
   }
 };

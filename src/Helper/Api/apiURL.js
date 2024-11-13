@@ -16,3 +16,6 @@ export const EXPORT_ALL_USERS_API_URL = '/export-round';
 
 export const POST_USER_DEPARTMENT_API_URL = '/user-department/post/';
 export const GET_CSRF_TOKEN_API_URL = '/get-csrf-token/';
+
+export const GET_DEPARTMENT_USER_COUNT_API_URL = '/departments/user-count/';
+export const GET_JURY_ANALYSIS_API_URL = '/jury/analysis/';

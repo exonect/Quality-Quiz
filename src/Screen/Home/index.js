@@ -118,11 +118,11 @@ const QuizDashboard = () => {
       if (!departmentScores[department]) {
         departmentScores[department] = 0;
       }
-      departmentScores[department] += user.score;
+      departmentScores[department] += 1;
     });
     return Object.keys(departmentScores).map((dept) => ({
-      name: dept,
-      score: departmentScores[dept],
+      department_name: dept,
+      participants: departmentScores[dept],
     }));
   };
 
@@ -130,7 +130,7 @@ const QuizDashboard = () => {
     const data = getScoresByDepartment();
     // Filter chart data based on selected department
     return selectedDepartment
-      ? data.filter((item) => item.name === selectedDepartment)
+      ? data.filter((item) => item.department_name === selectedDepartment)
       : data;
   };
 
