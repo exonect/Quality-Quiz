@@ -288,7 +288,7 @@ const QuizDashboard = () => {
                   <Grid container spacing={1} className="mt-1">
                     <Grid item xs={12}>
                       <Paper className="bg-gradient-to-r from-red-500 to-red-700 p-[8px] rounded-lg text-center shadow-md">
-                        <Typography variant="h6">Score btw 50 to 90</Typography>
+                        <Typography variant="h6">Score Between 50 to 90</Typography>
                         <Typography variant="h4">
                           {juryAnalysisList?.round_one?.users_with_score_between_50_and_90 || 0}
                         </Typography>
@@ -298,7 +298,7 @@ const QuizDashboard = () => {
                   <Grid container spacing={1} className="mt-1">
                     <Grid item xs={12}>
                       <Paper className="bg-gradient-to-r from-red-500 to-red-700 p-[8px] rounded-lg text-center shadow-md">
-                        <Typography variant="h6">Score bellow 50</Typography>
+                        <Typography variant="h6">Score Below 50</Typography>
                         <Typography variant="h4">
                           {juryAnalysisList?.round_one?.users_with_score_below_50 || 0}
                         </Typography>
@@ -315,7 +315,7 @@ const QuizDashboard = () => {
                       variant="h6"
                       className="font-semibold text-gray-800"
                     >
-                      Score Distribution by Department
+                      Participant By Department
                     </Typography>
                     <SimpleBarChart data={getChartData()} />
                   </Paper>
@@ -444,9 +444,9 @@ const QuizDashboard = () => {
                           )}
                         </Box>
                       </TableCell>
+                      <TableCell>Start Date</TableCell>
+                      <TableCell>End Date</TableCell>
                       <TableCell>Duration</TableCell>
-                      <TableCell>Start date</TableCell>
-                      <TableCell>End date</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -456,14 +456,14 @@ const QuizDashboard = () => {
                         <TableCell>{participant.user_email}</TableCell>
                         <TableCell>{participant.user_department}</TableCell>
                         <TableCell>{participant.score}</TableCell>
+                        <TableCell>{moment(participant.formatted_start_time).format('DD-MMM-YY T HH:mm:ss')}</TableCell>
+                        <TableCell>{moment(participant.formatted_end_time).format('DD-MMM-YY T HH:mm:ss')}</TableCell>
                         <TableCell>
                           {getDuration(
                             participant.formatted_start_time,
                             participant.formatted_end_time
                           )}
                         </TableCell>
-                        <TableCell>{moment(participant.formatted_start_time).format('DD-MMM-YY T HH:mm:ss')}</TableCell>
-                        <TableCell>{moment(participant.formatted_end_time).format('DD-MMM-YY T HH:mm:ss')}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

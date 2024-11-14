@@ -22,7 +22,7 @@ const CustomTooltip = ({ active, payload }) => {
           border: "1px solid #ddd",
         }}
       >
-        <p>{participants}</p>
+        {/* <p>Participant: {participants}</p> */}
         <p>{department_name}</p>
       </div>
     );
@@ -59,7 +59,7 @@ const SimpleBarChart = ({ data }) => {
         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
-        <XAxis dataKey="letter" tick={{ fill: "#333" }} />
+        <XAxis tick={{ fill: "#333" }} />
         <YAxis tick={{ fill: "#333" }} />
         <Tooltip
           content={<CustomTooltip />}
@@ -71,7 +71,7 @@ const SimpleBarChart = ({ data }) => {
           dataKey="participants"
           fill="#82ca9d"
           radius={[5, 5, 0, 0]}
-          // label={{ position: "top" }}
+          label={{ position: "top" }}
         >
           {scoreData.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={barColors[index % 20]} />
