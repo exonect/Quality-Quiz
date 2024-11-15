@@ -28,6 +28,7 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import {
   ExportAllUsersDataApi,
   ExportTop50UsersDataApi,
+  GetDepartmentUserCountApi,
   GetJuryAnalysisApi,
   GetTop50UsersApi,
   signOut,
@@ -46,6 +47,7 @@ const QuizDashboard = () => {
   const [toasterType, setToasterType] = useState("");
   const [top50UsersList, setTop50UsersList] = useState([]);
   const [juryAnalysisList, setJuryAnalysisList] = useState(null);
+  const [departmentUserCountList, setDepartmentUserCountList] = useState(null);
   const [selectedDepartment, setSelectedDepartment] = useState(""); // State for selected department
   const [departments, setDepartments] = useState([]); // State for department list
 
@@ -76,11 +78,22 @@ const QuizDashboard = () => {
     }
   };
 
+  const GetDepartmentUserCount = async () => {
+    const DepartmentUserCountData = await GetDepartmentUserCountApi();
+    if (DepartmentUserCountData.status >= 200 && DepartmentUserCountData.status <= 300) {
+      setDepartmentUserCountList(DepartmentUserCountData.data);
+      GetTop50Users();
+    } else {
+      setIsLoading(false);
+      showToastMessage("Something went wrong, please try again", "error");
+    }
+  };
+
   const GetJuryAnalysis = async () => {
     const juryAnalysisData = await GetJuryAnalysisApi();
     if (juryAnalysisData.status >= 200 && juryAnalysisData.status <= 300) {
       setJuryAnalysisList(juryAnalysisData.data);
-      GetTop50Users();
+      GetDepartmentUserCount();
     } else {
       setIsLoading(false);
       showToastMessage("Something went wrong, please try again", "error");
@@ -317,7 +330,9 @@ const QuizDashboard = () => {
                     >
                       Participant By Department
                     </Typography>
-                    <SimpleBarChart data={getChartData()} />
+                    {departmentUserCountList &&
+                      <SimpleBarChart data={departmentUserCountList} />
+                    }
                   </Paper>
                 </Grid>
               </div>

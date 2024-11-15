@@ -13,7 +13,7 @@ import {
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
-    const { department_name, participants } = payload[0].payload;
+    const { department, user_count } = payload[0].payload;
     return (
       <div
         style={{
@@ -22,8 +22,8 @@ const CustomTooltip = ({ active, payload }) => {
           border: "1px solid #ddd",
         }}
       >
-        {/* <p>Participant: {participants}</p> */}
-        <p>{department_name}</p>
+        {/* <p>Participant: {user_count}</p> */}
+        <p>{department}</p>
       </div>
     );
   }
@@ -66,9 +66,9 @@ const SimpleBarChart = ({ data }) => {
           contentStyle={{ backgroundColor: "#fff", borderColor: "#ddd" }}
         />
         {/* <Legend /> */}
-        {/* <Bar dataKey="participants" fill="#82ca9d" radius={[5, 5, 0, 0]} /> */}
+        {/* <Bar dataKey="user_count" fill="#82ca9d" radius={[5, 5, 0, 0]} /> */}
         <Bar
-          dataKey="participants"
+          dataKey="user_count"
           fill="#82ca9d"
           radius={[5, 5, 0, 0]}
           label={{ position: "top" }}
