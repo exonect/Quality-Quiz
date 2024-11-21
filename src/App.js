@@ -13,6 +13,7 @@ const SignIn = lazy(() => import("./Screen/SignIn"));
 const NotFound = lazy(() => import("./Screen/NotFound"));
 const Home = lazy(() => import("./Screen/Home"));
 const Welcome = lazy(() => import("./Screen/Welcome"));
+const Thankyou = lazy(() => import("./Screen/Thankyou"));
 
 const App = () => {
   // const navigate = useNavigate();
@@ -96,9 +97,13 @@ const App = () => {
                           }}
                         >
                           <Routes>
-                            <Route
+                            {/* <Route
                               path="/quiz/dashboard"
                               element={<QuizDashboard />}
+                            /> */}
+                            <Route
+                              path="/quiz/thankyou"
+                              element={<Thankyou />}
                             />
                             <Route path="/" element={<Welcome />} />
                             <Route path="*" element={<NotFound />} />

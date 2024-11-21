@@ -15,7 +15,8 @@ const Welcome = () => {
       setIsUserLogdin(true);
       setUserRole(userRoleData)
       if (userRoleData === 'participant') {
-        navigate("/quiz/dashboard");
+        // navigate("/quiz/dashboard");
+        navigate("/quiz/thankyou");
       }
       if (userRoleData === 'jury') {
         navigate("/dashboard");

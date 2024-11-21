@@ -48,7 +48,8 @@ const SignIn = () => {
       localStorage.setItem("userInfo", JSON.stringify(ssoAPIRes.detail));
       setApiStore({ ...apiStore, login: ssoAPIRes.detail });
       if (ssoAPIRes?.detail?.user_type === "participant") {
-        navigate("/quiz/dashboard");
+        // navigate("/quiz/dashboard");
+        navigate("/quiz/thankyou");
       }
       if (ssoAPIRes?.detail?.user_type === "jury") {
         navigate("/dashboard");
