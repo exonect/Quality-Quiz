@@ -97,14 +97,14 @@ const App = () => {
                           }}
                         >
                           <Routes>
-                            {/* <Route
+                            <Route
                               path="/quiz/dashboard"
                               element={<QuizDashboard />}
-                            /> */}
-                            <Route
+                            />
+                            {/* <Route
                               path="/quiz/thankyou"
                               element={<Thankyou />}
-                            />
+                            /> */}
                             <Route path="/" element={<Welcome />} />
                             <Route path="*" element={<NotFound />} />
                           </Routes>
